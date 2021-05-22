@@ -1,304 +1,123 @@
-.. Licensed to the Apache Software Foundation (ASF) under one or more
-   contributor license agreements.  See the NOTICE file distributed with this work
-   for additional information# regarding copyright ownership. The ASF licenses this
-   file to you under the Apache License, Version 2.0 (the "License"); you may not
-   use this file except in compliance with the License.  You may obtain a copy of
-   the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by
-   applicable law or agreed to in writing, software distributed under the License
-   is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-   KIND, either express or implied.  See the License for the specific language
-   governing permissions and limitations under the License.
+.. 
+   "Option One Technologies Cloud" (OOTC) documentation.
 
-
-CloudStack Kubernetes Service
+OOTC Kubernetes Service
 ==============================
-
-The Kubernetes Service plugin adds Kubernetes integration to CloudStack. The plugin is disabled by default and an admin can enable it using a Global Setting. It enables users to run containerized services using Kubernetes clusters.
-
-Kubernetes Service plugin uses a CoreOS based template for node VMs for the Kubernetes cluster. CoreOS has been used as it provides docker installation and networking rules needed for Kubernetes by default. In future, different guest OSes might be used. For installation of Kubernetes binaries on cluster nodes, a binaries ISO is used for each Kubernetes version to be made available via CloudStack. This allows faster, offline installation of Kubernetes binaries and docker images along with support for adding multiple versions of Kubernetes for upgrades and running different clusters.
-
-For deployment and setup of Kubernetes on cluster nodes, the plugin uses the Kubernetes tool, 'kubeadm'. kubeadm is the command-line tool for easily provisioning a secure Kubernetes cluster on top of physical or cloud servers or virtual machines. Under the hood, master node(s) of the cluster starts a Kubernetes cluster using kubeadm init command with a custom token, and worker nodes join this Kubernetes cluster using kubeadm join command with the same token. More about kubeadm here: https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm/. Weave Net CNI provider plugin is used for cluster networking. More about Weave Net provide plugin here: https://www.weave.works/docs/net/latest/kubernetes/kube-addon/.
-
-To access the Kubernetes dashboard securely, the plugin provides access to kubeconfig file data which uses the Kubernetes tool kubectl to run a local proxy and thereby access the dashboard. More about kubectl here: https://kubernetes.io/docs/reference/kubectl/overview/
-
-The service allows creation of Kubernetes clusters using the UI or API. Both UI and API provide the ability to list, delete, scale upgrade, stop and start these clusters.
-
-Enabling the Kubernetes Service
---------------------------------
-
-The Kubernetes Service plugin is disabled by default. To enable it, go to Global Settings and set the following global configuration to true:
-
-.. parsed-literal::
-
-   cloud.kubernetes.service.enabled
-
-Restart the Management Server to enable the set configuration values.
-
-.. parsed-literal::
-
-   # service cloudstack-management restart
-
-   # service cloudstack-usage restart
-
-Once the Kubernetes service is running the new APIs will become accessible and the UI will start show a Kubernetes Service tab.
-
-Kubernetes Supported Versions
-------------------------------
-
-The Kubernetes service provides the functionality to manage multiple supported Kubernetes versions. Management can be via both UI and API. A supported version corresponds to a specific Kubernetes version for which an ISO has been uploaded. Pre-built, community ISOs for different Kubernetes versions are available at:
-
-- http://download.cloudstack.org/cks/
-- http://packages.shapeblue.com/cks/
-
-A script is provided (see below) to add other Kubernetes versions. Once an ISO is created for a Kubernetes version it can be added in the service and other CRUD operations can be performed using both the UI and API. Using a pre-packaged ISO containing required binaries and docker images allows faster provisioning on the node virtual machines of a Kubernetes cluster. Complete offline provisioning of the Kubernetes cluster is not supported at present as the kubeadm init command needs active Internet access.
-
-A script named create-kubernetes-binaries-iso.sh has been provided in the cloudstack-common package for creating a new setup ISO with the desired version of Kubernetes binaries and corresponding docker images.
-
-Usage:
-
-.. parsed-literal::
-
-   # ./create-kubernetes-binaries-iso.sh OUTPUT_PATH KUBERNETES_VERSION CNI_VERSION CRICTL_VERSION WEAVENET_NETWORK_YAML_CONFIG DASHBOARD_YAML_CONFIG
-
-Eg:
-
-.. parsed-literal::
-
-   # ./create-kubernetes-binaries-iso.sh ./ 1.12.5 0.7.1 1.12.0 "https://cloud.weave.works/k8s/net?k8s-version=1.12.5" https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-beta1/aio/deploy/recommended.yaml
-
-Working with Kubernetes supported version
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Adding supported Kubernetes version
-####################################
-
-Once the ISO has been built for a desired Kubernetes version, it can be added by the admin in the service for cluster deployment using both the UI and API. The UI provides the following form to add new supported version:
-
-|cks-add-version-form.png|
-
-addKubernetesSupportedVersion API can be used by an admin to add a new supported version for the service. It takes following input parameters:
-
-- **name** (the name of the Kubernetes supported version) · semanticversion (the semantic version of the Kubernetes release in MAJOR.MINOR.PATCH format. More about semantic versioning here: https://semver.org/ Required)
-- **zoneid** (the ID of the zone in which Kubernetes supported version will be available)
-- **url** (the URL of the binaries ISO for Kubernetes supported version)
-- **checksum** (the checksum value of the binaries ISO)
-- **mincpunumber** (the minimum number of CPUs to be set with the Kubernetes supported version)
-- **minmemory** (the minimum RAM size in MB to be set with the Kubernetes supported version)
-
-For example:
-
-.. parsed-literal::
-   > add kubernetessupportedversion name=v1.13.2 semanticversion=1.13.2 url=http://172.20.0.1/files/setup-1.13.2.iso zoneid=34d23dd5-5ced-4e8b-9b0a-835a0b8ae2a6 mincpunumber=2 minmemory=2048
-   {
-      "kubernetessupportedversion": {
-      "id": "6668e999-fe6c-4a91-88d8-d10bcf280d02",
-      "isoid": "78d45e9b-a482-46f4-8cbc-cf7964564b85",
-      "isoname": "v1.13.2-Kubernetes-Binaries-ISO",
-      "isostate": "Active",
-      "semanticversion": "1.13.2",
-      "name": "v1.13.2",
-      "supportsha": false,
-      "zoneid": "34d23dd5-5ced-4e8b-9b0a-835a0b8ae2a6",
-      "zonename": "KVM-advzone1"
-      "mincpunumber": 2
-      "minmemory": 2048
-      }
-   }
-
-The minimum Kubernetes version that can be added in the service is 1.11. At present, v1.17 and above might not work due to their incompatibility with weave-net plugin.
-
-Listing supported Kubernetes versions
-######################################
-
-listKubernetesSupportedVersion API can be used to list existing supported versions. id parameter can be passed as input to list details of a single supported version.
-
-|cks-versions.png|
-
-Updating supported Kubernetes version
-######################################
-
-updateKubernetesSupportedVersion API can be used by admins to update an existing supported version to set their state enabled or disabled. Supported versions with disabled state cannot be used for deploying Kubernetes clusters. It takes following input parameters,
-
-- **id** (the ID of the Kubernetes supported version)
-- **state** (the state of the Kubernetes supported version)
-
-Deleting supported Kubernetes version
-######################################
-
-deleteKubernetesSupportedVersion API has been provided for admins to delete an existing supported version if it is not used by any Kubernetes cluster in the service. id parameter of the API can be used to pass Kubernetes version to be deleted.
-
-.. note::
-   addKubernetesSupportedVersion, updatedKubernetesSupportedVersion and deleteKubernetesSupportedVersion APIs are available to admin only
 
 Kubernetes clusters
 --------------------
 
 The Kubernetes service provides the functionality of running and managing Kubernetes clusters. Highly available, scalable Kubernetes clusters can be created to run containerized deployments without having to set up Kubernetes on each container node manually. The service will automatically provision the desired number of virtual machines as per cluster size using the binaries from the given Kubernetes version. Additionally, the service provides the functionality to upgrade and scale clusters. Running clusters can be upgraded to a newer minor or patch Kubernetes version at a time. Running clusters can also be scaled for the number of worker nodes up and down and for the service offering used by each node.
 
-This provides functionality to create Kubernetes clusters for Shared, Isolated and VPC networks in CloudStack, but such networks must be accessible to the CloudStack management server for provisioning virtual machines on the cluster. Template and default network offering must be set Global Settings for the service to create Kubernetes clusters.
-
-.. note::
-   In case of isolated and VPC networks, if egress rules and ACLs don't allow traffic the setup of the Kubernetes cluster and deployment of pods may fail due to inability of fetching the images from public network.
-
-The following Global Settings value must be set to the name of Template to be used for deploying node virtual machines for the respective hypervisor while creating a Kubernetes cluster:
-
-- **cloud.kubernetes.cluster.template.name.hyperv** (Name of the template to be used for creating Kubernetes cluster nodes on HyperV)
-- **cloud.kubernetes.cluster.template.name.kvm** (Name of the template to be used for creating Kubernetes cluster nodes on KVM)
-- **cloud.kubernetes.cluster.template.name.vmware** (Name of the template to be used for creating Kubernetes cluster nodes on VMware)
-- **cloud.kubernetes.cluster.template.name.xenserver** (Name of the template to be used for creating Kubernetes cluster nodes on Xenserver)
-
-Using a CoreOS template is required - you can find CoreOS templates for CloudStack here, http://dl.openvm.eu/cloudstack/coreos/x86_64/
-
-.. note::
-   For VMware, CoreOS template must be registered with root disk controller as **pvscsi** and NIC adapter type as **Vmxnet3**.
-
-The following Global Setting value must be set to the name of Network Offering to be used for creating a new network when no network has been selected while creating a Kubernetes cluster:
-
-.. parsed-literal::
-
-   cloud.kubernetes.cluster.network.offering
-
-A new network offering named DefaultNetworkOfferingforKubernetesService has been added since 4.14.0
-
-.. note::
-   - Multi-master, HA cluster can be created for Kubernetes version 1.16 and above only.
-   - While creating multi-master, HA cluster over a shared network, an external load-balancer must be manually setup. This load-balancer should have port-forwarding rules for SSH, Kubernetes API server access. Service assumes SSH access to cluster nodes is available from port 2222 to (2222 + cluster node count -1). Similarly, for API access 6443 must be forwarded to master nodes. Over the CloudStack isolated network these rules are automatically provisioned.
 
 Managing Kubernetes clusters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For Kubernetes cluster management, the service provides create, stop, start, scale, upgrade and delete APIs and similar features in the UI.
+Users can create, stop, start, scale, upgrade and delete Kubernetes clusters from the OOTC UI.
 
 Creating a new Kubernetes cluster
 ##################################
 
-New Kubernetes clusters can be create using API or from UI. User will be provided with a Add Kubernetes Cluster form as shown below,
+To create a new Kubernetes cluster:
 
-|cks-create-cluster-form.png|
+#. Log in to the OOTC UI.
 
-createKubernetesCluster API can be used to create new Kubernetes cluster. It takes following parameters as input,
+#. In the left navigation bar, click on compute icon |compute-icon.png|, and select Kubernetes from the menu.
 
-- **name** (name for the Kubernetes cluster; Required)
-- **description** (description for the Kubernetes cluster; Required)
-- **zoneid** (availability zone in which Kubernetes cluster to be launched; Required)
-- **kubernetesversionid** (Kubernetes version with which cluster to be launched; Required)
-- **serviceofferingid** (the ID of the service offering for the virtual machines in the cluster; Required)
-- **account** (an optional account for the virtual machine. Must be used with domainId)
-- **domainid** (an optional domainId for the virtual machine. If the account parameter is used, domainId must also be used)
-- **projectid** (Deploy cluster for the project)
-- **networkid** (Network in which Kubernetes cluster is to be launched)
-- **keypair** (name of the ssh key pair used to login to the virtual machines)
-- **masternodes** (number of Kubernetes cluster master nodes, default is 1) externalloadbalanceripaddress (external load balancer IP address while using shared network with Kubernetes HA cluster)
-- **size** (number of Kubernetes cluster worker nodes; Required)
-- **noderootdisksize** (root disk size of root disk for each node)
-- **dockerregistryusername** (username for the docker image private registry; Experimental)
-- **dockerregistrypassword** (password for the docker image private registry; Experimental)
-- **dockerregistryurl** (URL for the docker image private registry; Experimental)
-- **dockerregistryemail** (email of the docker image private registry user; Experimental)
+#. Click on Create Kubernetes Cluster.
 
-For example:
+#. In the dialog box fill in the fields:
 
-.. parsed-literal::
-   > create kubernetescluster name=Test description=Test-Cluster zoneid=34d23dd5-5ced-4e8b-9b0a-835a0b8ae2a6 size=1 noderootdisksize=10 serviceofferingid=a4f280a1-9122-40a8-8f0c-3adb91060f2a kubernetesversionid=6668e999-fe6c-4a91-88d8-d10bcf280d02
-   {
-     "kubernetescluster": {
-       "associatednetworkname": "Test-network",
-       "cpunumber": "4",
-       "description": "Test-Cluster",
-       "endpoint": "https://172.20.20.12:6443/",
-       "id": "74e3cc02-bbf7-438f-bfb0-9c193e90c1fb",
-       "kubernetesversionid": "6668e999-fe6c-4a91-88d8-d10bcf280d02",
-       "kubernetesversionname": "v1.13.2",
-       "masternodes": 1,
-       "memory": "4096",
-       "name": "Test",
-       "networkid": "148af2cb-4b94-42a2-b701-3b6aa884cbb0",
-       "serviceofferingid": "a4f280a1-9122-40a8-8f0c-3adb91060f2a",
-       "serviceofferingname": "CKS Instance",
-       "size": 1,
-       "state": "Running",
-       "templateid": "17607ed6-1756-4ed7-b0f4-dbab5feff5b2",
-       "virtualmachineids": [
-         "da2cb67e-e852-4ecd-b16f-a8f16eb2c962",
-         "4179864a-88ad-4d6d-890c-c9b73c53589b"
-       ],
-       "zoneid": "34d23dd5-5ced-4e8b-9b0a-835a0b8ae2a6",
-       "zonename": "KVM-advzone1"
-     }
-   }
+   - Name. Give a name for the new Kubernetes cluster.
 
-On successful creation, the new cluster will be automatically started and will show up in Running state. If creation of the new cluster fails it can be in following states:
-- Alert – When node virtual machines were successfully provisioned, and cluster API server is accessible but further provisioning steps could not be completed.
-- Error – When the service has unable to provision node virtual machines for the cluster or cluster API server is not accessible.
+   - Description. Give a brief description about the new Kubernetes cluster.
+
+   - Zone. Select the zone you want to deploy the Kubernetes cluster.
+
+   - Kubernetes version. Select the Kubernetes version from the drop-down list.
+
+   - Compute offering. Select the compute offering for the virtual machines (nodes) in the cluster.
+
+   - Node root disk size. Specify the root disk size of the virtual machines, in GB.
+
+   - Network. Select the network for the Kubernetes cluster.
+
+   - Cluster size. Specify the number of virtual machines that you need to create in the cluster.
+
+   - SSH Key Pair. Name of the ssh key pair used to login to the virtual machines.
+
+#. Click on the OK button to create the cluster.
+
+On successful creation, the new cluster will be automatically started and will show up in Running state. 
 
 .. note::
-   - For CoreOS, a minimum of 2 cores of CPU and 2GB of RAM is needed for deployment. Therefore, the serviceofferingid parameter of createKuberntesCluster API must be provided with the ID of such compute offerings that conform to these requirements.
-   - Private docker registry related parameters of createKubentesCluster API (dockerregistryusername, dockerregistryusername, dockerregistryurl, dockerregistryemail) provides experimental functionality. To use them during cluster deployment value for global setting, cloud.kubernetes.cluster.experimental.features.enabled, must be set as true by admin beforehand.
+   - A minimum of 2 cores of CPU and 2GB of RAM is required for nodes in the cluster. Therefore, please ensure that you provde a compute offering that satisfy this minimum requirement.
 
 Listing Kubernetes clusters
 ############################
 
-listKubernetesCluster API can be used to list existing Kubernetes clusters. id parameter can be passed as input to list details of a single supported version.
+To list the Kubernetes clusters:
 
-|cks-clusters.png|
+#. Log in to the OOTC UI.
+
+#. In the left navigation bar, click on compute icon |compute-icon.png|, and select Kubernetes from the menu.
+
+The Kubernets clusters will be shown in the UI.
 
 Stopping Kubernetes cluster
 ############################
 
-A running Kubernetes cluster can be stopped using both the API and |cks-stop-action.png| action icon from UI. action icon is shown for a running cluster in the UI.
+To stop a Kubernetes cluster:
 
-stopKubernetesCluster can be used to stop a running cluster. It takes id of the cluster as the input parameter.
+#. Log in to the OOTC UI.
+
+#. In the left navigation bar, click on compute icon |compute-icon.png|, and select Kubernetes from the menu.
+
+#. Select the Kubernetes cluster you want to stop.
+
+#. Click on the Stop Cluster button. |stop-cluster.png|
+
 
 Starting a stopped Kubernetes cluster
 ######################################
 
-A stopped Kubernetes cluster can be started using both API and the |cks-start-action.png| action icon from UI. action icon is shown for a stopped cluster in the UI.
+To start a Kubernetes cluster in stopped state:
 
-startKubernetesCluster can be used to start a stopped cluster. It takes id of the cluster as the input parameter.
+#. Log in to the OOTC UI.
 
-When the service fails to start a stopped cluster, the cluster will show in Alert state else it will show in Running state.
+#. In the left navigation bar, click on compute icon |compute-icon.png|, and select Kubernetes from the menu.
+
+#. Select the Kubernetes cluster you want to start.
+
+#. Click on the Start Cluster button. |start-cluster.png|
+
 
 Scaling Kubernetes cluster
 ###########################
 
-A running or stopped Kubernetes cluster can be scaled using both API and UI. |cks-scale-action.png| action icon is shown for a running cluster in the UI which opens the form shown below,
-
-|cks-scale-cluster-form.png|
-
-scaleKubernetesCluster API can be used to scale a running (or stopped cluster) for a desired cluster size and service offering. It takes following parameters as input,
-
-- **id** (the ID of the Kubernetes cluster to be scaled; Required)
-- **serviceofferingid** (the ID of the new service offering for the virtual machines in the cluster)
-- **size** (number of Kubernetes cluster worker nodes)
-
-Only running Kubernetes clusters can be scaled for size. When the service fails to scale the cluster, the cluster will show in Alert state else if the scaling is successfull cluster will show up in Running state.
-
-Note: Only upscaling is supported while scaling clusters for service offering.
+..
+   @Todo: To be completed, after creating a Kubernetes cluster
 
 Upgrading Kubernetes cluster
 #############################
 
-A running Kubernetes cluster can be upgraded using both API and UI. |cks-upgrade-action.png| action icon is shown for a running cluster in the UI which opens the form shown below,
-
-|cks-upgrade-cluster-form.png|
-
-upgradeKubernetesCluster API can be used to upgrade a running cluster. It takes following parameters as input:
-
-- **id** (the ID of the Kubernetes cluster to be upgraded; Required)
-- **kubernetesversionid** (Kubernetes version with which cluster to be launched; Required)
-
-When the service fails to upgrade the cluster, the cluster will show in Alert state. If the upgrade has been successful cluster will show in Running state.
+..
+   @Todo: To be completed, after creating a Kubernetes cluster
 
 .. note:: Kubernetes can be upgraded from one MINOR version to the next MINOR version, or between PATCH versions of the same MINOR. That is, you cannot skip MINOR versions when you upgrade. For example, you can upgrade from 1.y to 1.y+1, but not from 1.y to 1.y+2. Therefore, service can upgrade running clusters in the similar manner only.
 
 Deleting Kubernetes cluster
 ############################
 
-Both UI and API can be used to delete a created Kubernetes cluster. |cks-delete-action.png| action icon will be available in UI to delete a cluster.
+To delete a Kubernetes cluster:
 
-deleteKubernetesCluster can be used to delete a cluster. It takes id of the cluster as the input parameter.
+#. Log in to the OOTC UI.
 
-The Kubernetes service runs a background state scanner process which regularly checks for cluster health. For clusters in Alert state, this background process verifies their state and moves them to Running state if all node virtual machines for the cluster are running and API server for the cluster is accessible.
+#. In the left navigation bar, click on compute icon |compute-icon.png|, and select Kubernetes from the menu.
+
+#. Select the Kubernetes cluster you want to start.
+
+#. Click on the Delete Cluster button. |delete-cluster.png|
 
 Working with Kubernetes cluster
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -306,6 +125,10 @@ Working with Kubernetes cluster
 |cks-cluster-details-tab.png|
 
 Once a Kubernetes cluster is created successfully and it is running state, it can be accessed using kubectl tool using cluster’s kubeconfig file. The web dashboard can be accessed by running local proxy using kubectl. Deployments in the cluster can be done using kubectl or web dashboard. More about deployment in Kubernetes here: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+
+..
+   @Todo: To be updated, after creating a Kubernetes cluster
+
 
 Accessing Kubernetes cluster
 #############################
@@ -344,6 +167,9 @@ Token for dashboard login can be retrieved using following command
 .. parsed-literal::
 
    # kubectl --kubeconfig /custom/path/kube.config describe secret $(kubectl --kubeconfig /custom/path/kube.config get secrets -n kubernetes-dashboard | grep kubernetes-dashboard-token | awk '{print $1}') -n kubernetes-dashboard
+
+..
+   @Todo: To be completed, after creating a Kubernetes cluster
 
 
 .. |cks-add-version-form.png| image:: /_static/images/cks-add-version-form.png

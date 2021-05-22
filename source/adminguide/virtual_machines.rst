@@ -40,7 +40,7 @@ EIP-enabled Basic zone. For more information on Elastic IP, see
 ..
    @Question: Assume above behavior is same in OOTC. Please confirm?
 
-OOTCcannot distinguish a guest VM that was shut down by the user
+OOTC cannot distinguish a guest VM that was shut down by the user
 (such as with the “shutdown” command in Linux) from a VM that shut down
 unexpectedly. If an HA-enabled VM is shut down from inside the VM,
 OOTC will restart it. To shut down an HA-enabled VM, you must go
