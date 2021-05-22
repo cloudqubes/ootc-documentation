@@ -4,12 +4,12 @@
 About Working with Virtual Machines
 ===================================
 
-OOTC gives you complete control over the
-lifecycle of the guest VMs in the cloud. You can start, reboot, stop, and
-destroy a VM using the OOTC UI.
+OOTC gives you complete control over the lifecycle of the guest VMs in the cloud. 
+Using the OOTC UI, you can start, reboot, stop, and destroy VMs.
 
 A VM can have a name, a display name, and a group. You can use these to 
 keep your VMs organized.
+
 ..
    @Question: The group is visible only at the VM creation. Should we mention that in the docs?
 
@@ -17,6 +17,7 @@ keep your VMs organized.
 A VMs can be configured to be Highly Available (HA). An HA-enabled
 VM is monitored by the system. If the system detects that the VM is
 down, it will attempt to restart the VM, possibly on a different host.
+
 ..
    @Question: Must link to 'how to enable HA in a VM'. OOTC docs does not clearly
    explain how to enable HA. Can you mention whether HA is supported in OOTC?
