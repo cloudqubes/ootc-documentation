@@ -16,7 +16,7 @@
 About Working with Virtual Machines
 ===================================
 
-CloudStack provides administrators with complete control over the
+OOTC provides administrators with complete control over the
 lifecycle of all guest VMs executing in the cloud. CloudStack provides
 several guest management operations for end users and administrators.
 VMs may be stopped, started, rebooted, and destroyed.
