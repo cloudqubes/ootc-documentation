@@ -1,80 +1,152 @@
-.. Licensed to the Apache Software Foundation (ASF) under one
-   or more contributor license agreements.  See the NOTICE file
-   distributed with this work for additional information#
-   regarding copyright ownership.  The ASF licenses this file
-   to you under the Apache License, Version 2.0 (the
-   "License"); you may not use this file except in compliance
-   with the License.  You may obtain a copy of the License at
-   http://www.apache.org/licenses/LICENSE-2.0
-   Unless required by applicable law or agreed to in writing,
-   software distributed under the License is distributed on an
-   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-   KIND, either express or implied.  See the License for the
-   specific language governing permissions and limitations
-   under the License.
+.. 
+   "Option One Technologies Cloud" (OOTC) documentation.
 
 
-In a CloudStack, guest VMs can communicate with each other using shared
-infrastructure with the security and user perception that the guests
-have a private LAN. The CloudStack virtual router is the main component
-providing networking features for guest traffic.
+About Networking in OOTC
+---------------------------
 
-.. include:: networking/guest_traffic.rst
+OOTC implements flexible virtual networking solution. 
+A virtual network in OOTC can be L2 or L3. When creating a VM, you 
+can select the networks, the VM has to connect. You can also connect a running VM to a new 
+virtual network.
 
-.. include:: networking/networking_in_pod.rst
 
-.. include:: networking/networking_in_zone.rst
+L3 Networks
+~~~~~~~~~~~~~~~~~
 
-.. include:: networking/basic_zone_config.rst
+..
+   @Question: Considering the end-users point of view, I am considering isolated networks as 
+   L3 networks. Is this OK?
 
-.. include:: networking/advanced_zone_config.rst
+An L3 network can be connected to the Internet via loadbalancer or NAT.
+VMs in an L3 network can be assigned with IP addresses via DHCP.
 
-.. include:: networking/multiple_guest_networks.rst
+To create an L3 Network:
 
-.. include:: networking/ip_reservation_in_guest_networks.rst
+#. Log in to the CloudStack UI.
 
-.. include:: networking/public_ips_and_vlans_for_accounts.rst
+#. In the left navigation, choose Guest Networks in Network menu. |network-icon.png|
+
+#. Click Add network. Provide the following information:
+
+   -  **Name**: The name of the network..
+
+   -  **Description**: The description of the network..
+
+   -  **Zone**. The name of the zone this network applies to. Each zone
+      is a broadcast domain, and therefore each zone has a different IP
+      range for the guest network. The administrator must configure the
+      IP range for each zone.
+
+   -  **Network offering**: Select one of the avialable offerings.
+
+..
+   @Todo: Need to include some desscription about each of the offerings.
+
+   -  **Gateway**: The gateway that the VMs should use.
+
+   -  **Netmask**: The netmask of the subnet assigned to the network.
+
+   -  **Network Domain**.
+
+..
+   @Question: What should be the description here?
+
+#. Click OK to create network.
+
+
+L2 Networks
+~~~~~~~~~~~
+
+L2 networks do not have routing capabilities. OOTC will not assign IP addresses to L2 networks.
+You can use L2 networks for internal communciation of VMs.
+
+To create an L2 Network:
+
+#. Log in to the CloudStack UI.
+
+#. In the left navigation, choose Guest Networks in Network menu. |network-icon.png|
+
+#. Click Add network and select L2 tab. Provide the following information:
+
+   -  **Name**: The name of the network..
+
+   -  **Description**: The description of the network..
+
+   -  **Zone**. The name of the zone this network applies to. Each zone
+      is a broadcast domain, and therefore each zone has a different IP
+      range for the guest network. The administrator must configure the
+      IP range for each zone.
+
+   -  **Network offering**: Select one of the avialable offerings.
+
+#. Click OK to create network.
+
+
+Managing Networks
+~~~~~~~~~~~~~~~~~
+
+To view VM instances connected to a network:
+
+#. Log in to the CloudStack UI.
+
+#. In the left navigation, choose Guest Networks in Network menu. |network-icon.png|
+
+#. Click on the network name in the list of networks.
+
+#. Click View Instances button.
+
+To connect a VM to a network:
+
+#. Log in to the CloudStack UI.
+
+#. In the left navigation, choose Guest Instances from Compute menu. |compute-icon.png|
+
+#. Click on NICs tab. Click on Add network to VM.
+
+#. Select the network from the drop-down menu.
+
+#. Optionally, provide an IP address.
+
+#. Click OK.
+
+To remove a connection to a network from a VM:
+
+#. Log in to the CloudStack UI.
+
+#. In the left navigation, choose Guest Instances from Compute menu. |compute-icon.png|
+
+#. Click on NICs tab.
+
+#. In the list of networks displayed, click on the plus icon |plus-icon.png| of the network you
+   wish to remove.
+
+#. Click on Delete button. |delete-button.png|
+
+
+To delete a network:
+
+#. Log in to the CloudStack UI.
+
+#. In the left navigation, choose Guest Networks in Network menu. |network-icon.png|
+
+#. Click on the network name in the list of networks.
+
+#. Click View Instances button, and make sure that the network has no virtual NICs attached.
+
+#. In the network view, click Delete button. |delete-button.png|
+
 
 .. include:: networking/multiple_ips_on_single_nic.rst
 
-.. include:: networking/multiple_ip_ranges.rst
 
-.. include:: networking/elastic_ips.rst
+..
+   @Question: Is elastic IP assignment supported?
 
-.. include:: networking/portable_ips.rst
+..
+   @Question: are security groups supported?
 
-.. include:: networking/multiple_subnets_in_shared_network.rst
 
-.. include:: networking/isolation_in_advanced_zone_with_vlan.rst
-
-.. include:: networking/security_groups.rst
-
-.. include:: networking/external_firewalls_and_load_balancers.rst
-
-.. include:: networking/global_server_load_balancing.rst
-
-.. include:: networking/guest_ip_ranges.rst
-
-.. include:: networking/acquiring_an_ip_address.rst
-
-.. include:: networking/releasing_an_ip_address.rst
-
-.. include:: networking/static_nat.rst
-
-.. include:: networking/ip_forwarding_and_firewalling.rst
-
-.. include:: networking/ip_load_balancing.rst
-
-.. include:: networking/dns_and_dhcp.rst
-
-.. include:: networking/remote_access_vpn.rst
-
-.. include:: networking/site_to_site_vpn.rst
-
-.. include:: networking/inter_vlan_routing.rst
 
 .. include:: networking/virtual_private_cloud_config.rst
 
-.. include:: networking/persistent_networks.rst
-
-.. include:: networking/palo_alto_config.rst

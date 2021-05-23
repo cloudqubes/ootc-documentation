@@ -1,31 +1,14 @@
-.. Licensed to the Apache Software Foundation (ASF) under one
-   or more contributor license agreements.  See the NOTICE file
-   distributed with this work for additional information#
-   regarding copyright ownership.  The ASF licenses this file
-   to you under the Apache License, Version 2.0 (the
-   "License"); you may not use this file except in compliance
-   with the License.  You may obtain a copy of the License at
-   http://www.apache.org/licenses/LICENSE-2.0
-   Unless required by applicable law or agreed to in writing,
-   software distributed under the License is distributed on an
-   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-   KIND, either express or implied.  See the License for the
-   specific language governing permissions and limitations
-   under the License.
+.. 
+   "Option One Technologies Cloud" (OOTC) documentation.
    
 
-.. _configuring-vpc:
 
-Configuring a Virtual Private Cloud
------------------------------------
+Virtual Private Cloud
+--------------------
 
-.. _about-vpc:
 
-About Virtual Private Clouds
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-CloudStack Virtual Private Cloud is a private, isolated part of
-CloudStack. A VPC can have its own virtual network topology that
+OOTC Virtual Private Cloud is a private, isolated environment.
+A VPC can have its own virtual network topology that
 resembles a traditional physical network. You can launch VMs in the
 virtual network that can have private addresses in the range of your
 choice, for example: 10.0.0.0/16. You can define network tiers within
@@ -37,152 +20,13 @@ networks can have the network ranges 10.0.1.0/24, 10.0.2.0/24,
 10.0.3.0/24, and so on.
 
 
-Major Components of a VPC
-^^^^^^^^^^^^^^^^^^^^^^^^^
-
-A VPC is comprised of the following network components:
-
--  **VPC**: A VPC acts as a container for multiple isolated networks
-   that can communicate with each other via its virtual router.
-
--  **Network Tiers**: Each tier acts as an isolated network with its own
-   VLANs and CIDR list, where you can place groups of resources, such as
-   VMs. The tiers are segmented by means of VLANs. The NIC of each tier
-   acts as its gateway.
-
--  **Virtual Router**: A virtual router is automatically created and
-   started when you create a VPC. The virtual router connect the tiers
-   and direct traffic among the public gateway, the VPN gateways, and
-   the NAT instances. For each tier, a corresponding NIC and IP exist in
-   the virtual router. The virtual router provides DNS and DHCP services
-   through its IP.
-
--  **Public Gateway**: The traffic to and from the Internet routed to
-   the VPC through the public gateway. In a VPC, the public gateway is
-   not exposed to the end user; therefore, static routes are not support
-   for the public gateway.
-
--  **Private Gateway**: All the traffic to and from a private network
-   routed to the VPC through the private gateway. For more information,
-   see ":ref:`adding-priv-gw-vpc`".
-
--  **VPN Gateway**: The VPC side of a VPN connection.
-
--  **Site-to-Site VPN Connection**: A hardware-based VPN connection
-   between your VPC and your datacenter, home network, or co-location
-   facility. For more information, see ":ref:`setting-s2s-vpn-conn`".
-
--  **Customer Gateway**: The customer side of a VPN Connection. For more
-   information, see `"Creating and Updating a VPN
-   Customer Gateway" <#creating-and-updating-a-vpn-customer-gateway>`_.
-
--  **NAT Instance**: An instance that provides Port Address Translation
-   for instances to access the Internet via the public gateway. For more
-   information, see ":ref:`enabling-disabling-static-nat-on-vpc`".
-
--  **Network ACL**: Network ACL is a group of Network ACL items. Network
-   ACL items are nothing but numbered rules that are evaluated in order,
-   starting with the lowest numbered rule. These rules determine whether
-   traffic is allowed in or out of any tier associated with the network
-   ACL. For more information, see ":ref:`conf-net-acl`".
-
-
-Network Architecture in a VPC
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-In a VPC, the following four basic options of network architectures are
-present:
-
--  VPC with a public gateway only
-
--  VPC with public and private gateways
-
--  VPC with public and private gateways and site-to-site VPN access
-
--  VPC with a private gateway only and site-to-site VPN access
-
-
-Connectivity Options for a VPC
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-You can connect your VPC to:
-
--  The Internet through the public gateway.
-
--  The corporate datacenter by using a site-to-site VPN connection
-   through the VPN gateway.
-
--  Both the Internet and your corporate datacenter by using both the
-   public gateway and a VPN gateway.
-
-
-VPC Network Considerations
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Consider the following before you create a VPC:
-
--  A VPC, by default, is created in the enabled state.
-
--  A VPC can be created in Advance zone only, and can't belong to more
-   than one zone at a time.
-
--  The default number of VPCs an account can create is 20. However, you
-   can change it by using the max.account.vpcs global parameter, which
-   controls the maximum number of VPCs an account is allowed to create.
-
--  The default number of tiers an account can create within a VPC is 3.
-   You can configure this number by using the vpc.max.networks
-   parameter.
-
--  Each tier should have an unique CIDR in the VPC. Ensure that the
-   tier's CIDR should be within the VPC CIDR range.
-
--  A tier belongs to only one VPC.
-
--  All network tiers inside the VPC should belong to the same account.
-
--  When a VPC is created, by default, a SourceNAT IP is allocated to it.
-   The Source NAT IP is released only when the VPC is removed.
-
--  A public IP can be used for only one purpose at a time. If the IP is
-   a sourceNAT, it cannot be used for StaticNAT or port forwarding.
-
--  The instances can only have a private IP address that you provision.
-   To communicate with the Internet, enable NAT to an instance that you
-   launch in your VPC.
-
--  Only new networks can be added to a VPC. The maximum number of
-   networks per VPC is limited by the value you specify in the
-   vpc.max.networks parameter. The default value is three.
-
--  The load balancing service can be supported by only one tier inside
-   the VPC.
-
--  If an IP address is assigned to a tier:
-
-   -  That IP can't be used by more than one tier at a time in the VPC.
-      For example, if you have tiers A and B, and a public IP1, you can
-      create a port forwarding rule by using the IP either for A or B,
-      but not for both.
-
-   -  That IP can't be used for StaticNAT, load balancing, or port
-      forwarding rules for another guest network inside the VPC.
-
--  Remote access VPN is not supported in VPC networks.
-
-
 Adding a Virtual Private Cloud
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-When creating the VPC, you simply provide the zone and a set of IP
-addresses for the VPC network address space. You specify this set of
-addresses in the form of a Classless Inter-Domain Routing (CIDR) block.
 
-#. Log in to the CloudStack UI as an administrator or end user.
+#. Log in to the OOTC UI.
 
-#. In the left navigation, choose Network.
-
-#. In the Select view, select VPC.
+#. In the left navigation, choose Guest Networks in Network menu. |network-icon.png|
 
 #. Click Add VPC. The Add VPC page is displayed as follows:
 
@@ -196,83 +40,54 @@ addresses in the form of a Classless Inter-Domain Routing (CIDR) block.
 
    -  **Zone**: Choose the zone where you want the VPC to be available.
 
-   -  **Super CIDR for Guest Networks**: Defines the CIDR range for all
+   -  **CIDR**: Defines the CIDR range for all
       the tiers (guest networks) within a VPC. When you create a tier,
-      ensure that its CIDR is within the Super CIDR value you enter. The
+      ensure that its CIDR is within this CIDR value you enter. The
       CIDR must be RFC1918 compliant.
 
-   -  **DNS domain for Guest Networks**: If you want to assign a special
-      domain name, specify the DNS suffix. This parameter is applied to
-      all the tiers within the VPC. That implies, all the tiers you
-      create in the VPC belong to the same DNS domain. If the parameter
-      is not specified, a DNS domain name is generated automatically.
+   -  **Network Domain**:
 
-   -  **Public Load Balancer Provider**: You have two options: VPC
-      Virtual Router and Netscaler.
+..
+   @Question: What should be the description of the domain.
+
+   -  **VPC Offering**": Select an offering according to your requirement.
 
 #. Click OK.
 
 
-Adding Tiers
-~~~~~~~~~~~~
+Adding Networks to the VPC
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Tiers are distinct locations within a VPC that act as isolated networks,
-which do not have access to other tiers by default. Tiers are set up on
-different VLANs that can communicate with each other by using a virtual
-router. Tiers provide inexpensive, low latency network connectivity to
-other tiers within the VPC.
+You can create multiple networks within a VPc. A network inside a VPC, is not visible to other VPCs.
 
-#. Log in to the CloudStack UI as an administrator or end user.
+To add a network to a VPC:
 
-#. In the left navigation, choose Network.
+#. Log in to the OOTC UI.
+
+#. In the left navigation, choose VPC in Network menu. |network-icon.png|
 
 #. In the Select view, select VPC.
 
    All the VPC that you have created for the account is listed in the
    page.
 
-   .. note:: 
-      The end users can see their own VPCs, while root and domain admin can
-      see any VPC they are authorized to see.
+#. Click on the Networks tab.
 
-#. Click the Configure button of the VPC for which you want to set up
-   tiers.
-
-#. Click Create network.
-
-   The Add new tier dialog is displayed, as follows:
-
-   |add-tier.png|
-
-   If you have already created tiers, the VPC diagram is displayed.
-   Click Create Tier to add a new tier.
+#. Click Add network.
 
 #. Specify the following:
 
    All the fields are mandatory.
 
-   -  **Name**: A unique name for the tier you create.
+   -  **Name**: A unique name for the network you create.
 
-   -  **Network Offering**: The following default network offerings are
-      listed: Internal LB,
-      DefaultIsolatedNetworkOfferingForVpcNetworksNoLB,
-      DefaultIsolatedNetworkOfferingForVpcNetworks
+   -  **Network Offering**: Select a network offering as required.
 
-      In a VPC, only one tier can be created by using LB-enabled network
-      offering.
+..
+   @Question: Need to include descriptions of Network Offerings configured.
 
-   -  **Gateway**: The gateway for the tier you create. Ensure that the
-      gateway is within the Super CIDR range that you specified while
-      creating the VPC, and is not overlapped with the CIDR of any
-      existing tier within the VPC.
+   -  **Gateway**: The gateway for the tier you create. 
 
-   -  **VLAN**: The VLAN ID for the tier that the root admin creates.
-
-      This option is only visible if the network offering you selected
-      is VLAN-enabled.
-
-      For more information, see `"Assigning VLANs to
-      Isolated Networks" <hosts.html#assigning-vlans-to-isolated-networks>`_.
 
    -  **Netmask**: The netmask for the tier you create.
 
@@ -280,6 +95,7 @@ other tiers within the VPC.
       CIDR is 10.0.1.0/24, the gateway of the tier is 10.0.1.1, and the
       netmask of the tier is 255.255.255.0.
 
+   -  **ACL**: Choose an ACL to be applied for VMs in this network.
 #. Click OK.
 
 #. Continue with configuring access control list for the tier.
@@ -304,7 +120,7 @@ is supported.
 About Network ACL Lists
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-In CloudStack terminology, Network ACL is a group of Network ACL items.
+In OOTC terminology, Network ACL is a group of Network ACL items.
 Network ACL items are nothing but numbered rules that are evaluated in
 order, starting with the lowest numbered rule. These rules determine
 whether traffic is allowed in or out of any tier associated with the
@@ -332,7 +148,7 @@ Rule  Protocol Traffic type Action CIDR
 Creating ACL Lists
 ^^^^^^^^^^^^^^^^^^
 
-#. Log in to the CloudStack UI as an administrator or end user.
+#. Log in to the OOTC UI as an administrator or end user.
 
 #. In the left navigation, choose Network.
 
@@ -381,7 +197,7 @@ Creating ACL Lists
 Creating an ACL Rule
 ^^^^^^^^^^^^^^^^^^^^
 
-#. Log in to the CloudStack UI as an administrator or end user.
+#. Log in to the OOTC UI as an administrator or end user.
 
 #. In the left navigation, choose Network.
 
@@ -493,7 +309,7 @@ network has 1:1 relationship with the NIC of the physical network. You
 can configure multiple private gateways to a single VPC. No gateways
 with duplicated VLAN and IP are allowed in the same data center.
 
-#. Log in to the CloudStack UI as an administrator or end user.
+#. Log in to the OOTC UI as an administrator or end user.
 
 #. In the left navigation, choose Network.
 
@@ -630,7 +446,7 @@ Alternatively, you can do the following:
 Creating a Static Route
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-CloudStack enables you to specify routing for the VPN connection you
+OOTC enables you to specify routing for the VPN connection you
 create. You can enter one or CIDR addresses to indicate which traffic is
 to be routed back to the gateway.
 
@@ -651,7 +467,7 @@ to be routed back to the gateway.
 Blacklisting Routes
 ^^^^^^^^^^^^^^^^^^^
 
-CloudStack enables you to block a list of routes so that they are not
+OOTC enables you to block a list of routes so that they are not
 assigned to any of the VPC private gateways. Specify the list of routes
 that you want to blacklist in the ``blacklisted.routes`` global
 parameter. Note that the parameter update affects only new static route
@@ -663,7 +479,7 @@ blacklisted for the zone.
 Deploying VMs to the Tier
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#. Log in to the CloudStack UI as an administrator or end user.
+#. Log in to the OOTC UI as an administrator or end user.
 
 #. In the left navigation, choose Network.
 
@@ -691,12 +507,12 @@ Deploying VMs to the Tier
 Deploying VMs to VPC Tier and Shared Networks
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-CloudStack allows you deploy VMs on a VPC tier and one or more shared
+OOTC allows you deploy VMs on a VPC tier and one or more shared
 networks. With this feature, VMs deployed in a multi-tier application
 can receive monitoring services via a shared network provided by a
 service provider.
 
-#. Log in to the CloudStack UI as an administrator.
+#. Log in to the OOTC UI as an administrator.
 
 #. In the left navigation, choose Instances.
 
@@ -730,7 +546,7 @@ guest network only when the first port-forwarding, load balancing, or
 Static NAT rule is created for the IP or the network. IP can't be
 associated to more than one network at a time.
 
-#. Log in to the CloudStack UI as an administrator or end user.
+#. Log in to the OOTC UI as an administrator or end user.
 
 #. In the left navigation, choose Network.
 
@@ -789,7 +605,7 @@ when all the networking ( port forwarding, load balancing, or StaticNAT
 ) rules are removed for this IP address. The released IP address will
 still belongs to the same VPC.
 
-#. Log in to the CloudStack UI as an administrator or end user.
+#. Log in to the OOTC UI as an administrator or end user.
 
 #. In the left navigation, choose Network.
 
@@ -849,7 +665,7 @@ cannot enable static NAT to that IP.
 If a guest VM is part of more than one network, static NAT rules will
 function only if they are defined on the default network.
 
-#. Log in to the CloudStack UI as an administrator or end user.
+#. Log in to the OOTC UI as an administrator or end user.
 
 #. In the left navigation, choose Network.
 
@@ -922,7 +738,7 @@ provided by a internal LB VM configured on the target tier.
 Load Balancing Within a Tier (External LB)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-A CloudStack user or administrator may create load balancing rules that
+A OOTC user or administrator may create load balancing rules that
 balance traffic received at a public IP to one or more VMs that belong
 to a network tier that provides load balancing service in a VPC. A user
 creates a rule, specifies an algorithm, and assigns the rule to a set of
@@ -958,7 +774,7 @@ Creating a Network Offering for External LB
 To have external LB support on VPC, create a network offering as
 follows:
 
-#. Log in to the CloudStack UI as a user or admin.
+#. Log in to the OOTC UI as a user or admin.
 
 #. From the Select Offering drop-down, choose Network Offering.
 
@@ -985,7 +801,7 @@ follows:
 
    -  **VPC**: This option indicate whether the guest network is Virtual
       Private Cloud-enabled. A Virtual Private Cloud (VPC) is a private,
-      isolated part of CloudStack. A VPC can have its own virtual
+      isolated part of OOTC. A VPC can have its own virtual
       network topology that resembles a traditional physical network.
       For more information on VPCs, see :ref: `about-vpc`.
 
@@ -1015,7 +831,7 @@ follows:
 Creating an External LB Rule
 ''''''''''''''''''''''''''''
 
-#. Log in to the CloudStack UI as an administrator or end user.
+#. Log in to the OOTC UI as an administrator or end user.
 
 #. In the left navigation, choose Network.
 
@@ -1074,7 +890,7 @@ Creating an External LB Rule
       traffic.
 
    -  **Algorithm**. Choose the load balancing algorithm you want
-      CloudStack to use. CloudStack supports the following well-known
+      OOTC to use. OOTC supports the following well-known
       algorithms:
 
       -  Round-robin
@@ -1097,14 +913,14 @@ steps to add more load balancing rules for this IP address.
 Load Balancing Across Tiers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-CloudStack supports sharing workload across different tiers within your
+OOTC supports sharing workload across different tiers within your
 VPC. Assume that multiple tiers are set up in your environment, such as
 Web tier and Application tier. Traffic to each tier is balanced on the
 VPC virtual router on the public side, as explained in
 `"Adding Load Balancing Rules on a VPC" <#adding-load-balancing-rules-on-a-vpc>`_. 
 If you want the traffic coming
 from the Web tier to the Application tier to be balanced, use the
-internal load balancing feature offered by CloudStack.
+internal load balancing feature offered by OOTC.
 
 
 How Does Internal LB Work in VPC?
@@ -1131,10 +947,10 @@ Guidelines
 -  Internal LB and Public LB are mutually exclusive on a tier. If the
    tier has LB on the public side, then it can't have the Internal LB.
 
--  Internal LB is supported just on VPC networks in CloudStack 4.2
+-  Internal LB is supported just on VPC networks in OOTC 4.2
    release.
 
--  Only Internal LB VM can act as the Internal LB provider in CloudStack
+-  Only Internal LB VM can act as the Internal LB provider in OOTC
    4.2 release.
 
 -  Network upgrade is not supported from the network offering with
@@ -1164,7 +980,7 @@ To have internal LB support on VPC, either use the default offering,
 DefaultIsolatedNetworkOfferingForVpcNetworksWithInternalLB, or create a
 network offering as follows:
 
-#. Log in to the CloudStack UI as a user or admin.
+#. Log in to the OOTC UI as a user or admin.
 
 #. From the Select Offering drop-down, choose Network Offering.
 
@@ -1191,7 +1007,7 @@ network offering as follows:
 
    -  **VPC**: This option indicate whether the guest network is Virtual
       Private Cloud-enabled. A Virtual Private Cloud (VPC) is a private,
-      isolated part of CloudStack. A VPC can have its own virtual
+      isolated part of OOTC. A VPC can have its own virtual
       network topology that resembles a traditional physical network.
       For more information on VPCs, see `"About Virtual
       Private Clouds" <#about-virtual-private-clouds>`_.
@@ -1228,7 +1044,7 @@ navigate to **Infrastructure** > **Zones** > <zone\_ name> >
 LB VM**. You can manage the Internal LB VMs as and when required from
 the location.
 
-#. Log in to the CloudStack UI as an administrator or end user.
+#. Log in to the OOTC UI as an administrator or end user.
 
 #. In the left navigation, choose Network.
 
@@ -1270,7 +1086,7 @@ the location.
    -  **Instance Port**: The port of the internal LB VM.
 
    -  **Algorithm**. Choose the load balancing algorithm you want
-      CloudStack to use. CloudStack supports the following well-known
+      OOTC to use. OOTC supports the following well-known
       algorithms:
 
       -  Round-robin
@@ -1283,7 +1099,7 @@ the location.
 Adding a Port Forwarding Rule on a VPC
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#. Log in to the CloudStack UI as an administrator or end user.
+#. Log in to the OOTC UI as an administrator or end user.
 
 #. In the left navigation, choose Network.
 
@@ -1361,7 +1177,7 @@ network rules (port forwarding, load balancing and staticNAT) and the IP
 addresses associated to the tier are removed. The IP address still be
 belonging to the same VPC.
 
-#. Log in to the CloudStack UI as an administrator or end user.
+#. Log in to the OOTC UI as an administrator or end user.
 
 #. In the left navigation, choose Network.
 
@@ -1389,7 +1205,7 @@ Editing, Restarting, and Removing a Virtual Private Cloud
 
 .. note:: Ensure that all the tiers are removed before you remove a VPC.
 
-#. Log in to the CloudStack UI as an administrator or end user.
+#. Log in to the OOTC UI as an administrator or end user.
 
 #. In the left navigation, choose Network.
 

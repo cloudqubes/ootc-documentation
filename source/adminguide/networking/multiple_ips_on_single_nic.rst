@@ -1,23 +1,12 @@
-.. Licensed to the Apache Software Foundation (ASF) under one
-   or more contributor license agreements.  See the NOTICE file
-   distributed with this work for additional information#
-   regarding copyright ownership.  The ASF licenses this file
-   to you under the Apache License, Version 2.0 (the
-   "License"); you may not use this file except in compliance
-   with the License.  You may obtain a copy of the License at
-   http://www.apache.org/licenses/LICENSE-2.0
-   Unless required by applicable law or agreed to in writing,
-   software distributed under the License is distributed on an
-   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-   KIND, either express or implied.  See the License for the
-   specific language governing permissions and limitations
-   under the License.
+.. 
+   "Option One Technologies Cloud" (OOTC) documentation.
+
 
 
 Configuring Multiple IP Addresses on a Single NIC
 -------------------------------------------------
 
-CloudStack provides you the ability to associate multiple private IP
+OOTC provides you the ability to associate multiple private IP
 addresses per guest VM NIC. In addition to the primary IP, you can
 assign additional IPs to the guest VM NIC. This feature is supported on
 all the network configurations: Basic, Advanced, and VPC. Security
@@ -28,11 +17,8 @@ As always, you can specify an IP from the guest subnet; if not
 specified, an IP is automatically picked up from the guest VM subnet.
 You can view the IPs associated with for each guest VM NICs on the UI.
 You can apply NAT on these additional guest IPs by using network
-configuration option in the CloudStack UI. You must specify the NIC to
+configuration option in the OOTC UI. You must specify the NIC to
 which the IP should be associated.
-
-This feature is supported on XenServer, KVM, and VMware hypervisors.
-Note that Basic zone security groups are not supported on VMware.
 
 
 Use Cases
@@ -63,20 +49,22 @@ networks are connected to the same VM.
 Assigning Additional IPs to a VM
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#. Log in to the CloudStack UI.
+#. Log in to the OOTC UI.
 
-#. In the left navigation bar, click Instances.
+#. In the left navigation bar, click Instances in the compute menu. |compute-icon.png|
 
 #. Click the name of the instance you want to work with.
 
-#. In the Details tab, click NICs.
+#. In the Details tab, click NICs. Click on the plus sign at the network interface that
+   you want to add the secondary IP.
 
 #. Click View Secondary IPs.
 
-#. Click Acquire New Secondary IP, and click Yes in the confirmation
-   dialog.
+#. Click Edit Secondary IPs. |edit-secondary-ip-icon.png|
 
-   You need to configure the IP on the guest VM NIC manually. CloudStack
+#. Enter the new IP address and click on Add Secondary IP.
+
+   You need to configure the IP on the guest VM NIC manually. OOTC
    will not automatically configure the acquired IP address on the VM.
    Ensure that the IP address configuration persist on VM reboot.
 
@@ -84,15 +72,3 @@ Assigning Additional IPs to a VM
    Allocated. You can now use the IP address in Port Forwarding or
    StaticNAT rules.
 
-
-Port Forwarding and StaticNAT Services Changes
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Because multiple IPs can be associated per NIC, you are allowed to
-select a desired IP for the Port Forwarding and StaticNAT services. The
-default is the primary IP. To enable this functionality, an extra
-optional parameter 'vmguestip' is added to the Port forwarding and
-StaticNAT APIs (enableStaticNat, createIpForwardingRule) to indicate on
-what IP address NAT need to be configured. If vmguestip is passed, NAT
-is configured on the specified private IP of the VM. if not passed, NAT
-is configured on the primary IP of the VM.
