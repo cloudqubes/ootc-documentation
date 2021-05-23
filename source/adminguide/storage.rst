@@ -1,297 +1,33 @@
-.. Licensed to the Apache Software Foundation (ASF) under one
-   or more contributor license agreements.  See the NOTICE file
-   distributed with this work for additional information#
-   regarding copyright ownership.  The ASF licenses this file
-   to you under the Apache License, Version 2.0 (the
-   "License"); you may not use this file except in compliance
-   with the License.  You may obtain a copy of the License at
-   http://www.apache.org/licenses/LICENSE-2.0
-   Unless required by applicable law or agreed to in writing,
-   software distributed under the License is distributed on an
-   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-   KIND, either express or implied.  See the License for the
-   specific language governing permissions and limitations
-   under the License.
+.. 
+   "Option One Technologies Cloud" (OOTC) documentation.
 
 Storage Overview
 ----------------
 
-CloudStack defines two types of storage: primary and secondary. Primary
-storage can be accessed by either iSCSI or NFS. Additionally, direct
-attached storage may be used for primary storage. Secondary storage is
-always accessed using NFS.
-
-There is no ephemeral storage in CloudStack. All volumes on all nodes
-are persistent.
-
-
-Primary Storage
----------------
-
-This section gives technical details about CloudStack
-primary storage. For more information about the concepts behind primary storage
-see :ref:`about-primary-storage` . For information about how to install and configure
-primary storage through the CloudStack UI, see the in the Installation Guide.
-
-Best Practices for Primary Storage
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
--  The speed of primary storage will impact guest performance. If
-   possible, choose smaller, higher RPM drives or SSDs for primary
-   storage.
-
--  There are two ways CloudStack can leverage primary storage:
-
-   Static: This is CloudStack's traditional way of handling storage. In
-   this model, a preallocated amount of storage (ex. a volume from a
-   SAN) is given to CloudStack. CloudStack then permits many of its
-   volumes to be created on this storage (can be root and/or data
-   disks). If using this technique, ensure that nothing is stored on the
-   storage. Adding the storage to CloudStack will destroy any existing
-   data.
-
-   Dynamic: This is a newer way for CloudStack to manage storage. In
-   this model, a storage system (rather than a preallocated amount of
-   storage) is given to CloudStack. CloudStack, working in concert with
-   a storage plug-in, dynamically creates volumes on the storage system
-   and each volume on the storage system maps to a single CloudStack
-   volume. This is highly useful for features such as storage Quality of
-   Service. Currently this feature is supported for data disks (Disk
-   Offerings).
-
-
-Runtime Behavior of Primary Storage
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+OOTC has two type of storage volumes; Root volumes and data volumes.
 Root volumes are created automatically when a virtual machine is
 created. Root volumes are deleted when the VM is destroyed. Data volumes
 can be created and dynamically attached to VMs. Data volumes are not
 deleted when VMs are destroyed.
 
-Administrators should monitor the capacity of primary storage devices
-and add additional primary storage as needed. See the Advanced
-Installation Guide.
-
-Administrators add primary storage to the system by creating a
-CloudStack storage pool. Each storage pool is associated with a cluster
-or a zone.
-
-With regards to data disks, when a user executes a Disk Offering to
-create a data disk, the information is initially written to the
-CloudStack database only. Upon the first request that the data disk be
-attached to a VM, CloudStack determines what storage to place the volume
-on and space is taken from that storage (either from preallocated
-storage or from a storage system (ex. a SAN), depending on how the
-primary storage was added to CloudStack).
-
-
-Hypervisor Support for Primary Storage
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The following table shows storage options and parameters for different
-hypervisors.
-
-.. cssclass:: table-striped table-bordered table-hover
-
-============================================== ================ ==================== =========================== ============================
-Storage media \\ hypervisor                    VMware vSphere   Citrix XenServer     KVM                         Hyper-V
-============================================== ================ ==================== =========================== ============================
-**Format for Disks, Templates, and Snapshots** VMDK             VHD                  QCOW2                       VHD
-                                                                                                                 Snapshots are not supported.
-**iSCSI support**                              VMFS             Clustered LVM        Yes, via Shared Mountpoint  No
-**Fiber Channel support**                      VMFS             Yes, via Existing SR Yes, via Shared Mountpoint  No
-**NFS support**                                Yes              Yes                  Yes                         No
-**Local storage support**                      Yes              Yes                  Yes                         Yes
-**Storage over-provisioning**                  NFS and iSCSI    NFS                  NFS                         No
-**SMB/CIFS**                                   No               No                   No                          Yes
-**Ceph/RBD**                                   No               No                   Yes                         No
-============================================== ================ ==================== =========================== ============================
-
-XenServer uses a clustered LVM system to store VM images on iSCSI and
-Fiber Channel volumes and does not support over-provisioning in the
-hypervisor. The storage server itself, however, can support
-thin-provisioning. As a result the CloudStack can still support storage
-over-provisioning by running on thin-provisioned storage volumes.
-
-KVM supports "Shared Mountpoint" storage. A shared mountpoint is a file
-system path local to each server in a given cluster. The path must be
-the same across all Hosts in the cluster, for example /mnt/primary1.
-This shared mountpoint is assumed to be a clustered filesystem such as
-OCFS2. In this case the CloudStack does not attempt to mount or unmount
-the storage as is done with NFS. The CloudStack requires that the
-administrator insure that the storage is available
-
-With NFS storage, CloudStack manages the overprovisioning. In this case
-the global configuration parameter storage.overprovisioning.factor
-controls the degree of overprovisioning. This is independent of
-hypervisor type.
-
-Local storage is an option for primary storage for vSphere, XenServer,
-and KVM. When the local disk option is enabled, a local disk storage
-pool is automatically created on each host. To use local storage for the
-System Virtual Machines (such as the Virtual Router), set
-system.vm.use.local.storage to true in global configuration.
-
-CloudStack supports multiple primary storage pools in a Cluster. For
-example, you could provision 2 NFS servers in primary storage. Or you
-could provision 1 iSCSI LUN initially and then add a second iSCSI LUN
-when the first approaches capacity.
-
-
-Storage Tags
-~~~~~~~~~~~~
-
-Storage may be "tagged". A tag is a text string attribute associated
-with primary storage, a Disk Offering, or a Service Offering. Tags allow
-administrators to provide additional information about the storage. For
-example, that is a "SSD" or it is "slow". Tags are not interpreted by
-CloudStack. They are matched against tags placed on service and disk
-offerings. CloudStack requires all tags on service and disk offerings to
-exist on the primary storage before it allocates root or data disks on
-the primary storage. Service and disk offering tags are used to identify
-the requirements of the storage that those offerings have. For example,
-the high end service offering may require "fast" for its root disk
-volume.
-
-The interaction between tags, allocation, and volume copying across
-clusters and pods can be complex. To simplify the situation, use the
-same set of tags on the primary storage for all clusters in a pod. Even
-if different devices are used to present those tags, the set of exposed
-tags can be the same.
-
-
-Maintenance Mode for Primary Storage
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Primary storage may be placed into maintenance mode. This is useful, for
-example, to replace faulty RAM in a storage device. Maintenance mode for
-a storage device will first stop any new guests from being provisioned
-on the storage device. Then it will stop all guests that have any volume
-on that storage device. When all such guests are stopped the storage
-device is in maintenance mode and may be shut down. When the storage
-device is online again you may cancel maintenance mode for the device.
-The CloudStack will bring the device back online and attempt to start
-all guests that were running at the time of the entry into maintenance
-mode.
-
-
-Secondary Storage
------------------
-
-This section gives concepts and technical details about CloudStack
-secondary storage. For information about how to install and configure
-secondary storage through the CloudStack UI, see the Advanced
-Installation Guide. about-secondary-storage>`_
-
-Migration of data between secondary storages is now supported. One may choose
-to completely migrate the data or migrate data such that the stores
-are balanced by choosing the appropriate Migration Policy. In order to facilitate
-distributing the migration load, SSVMs are spawned up if a file transfer takes
-more than a defined threshold. Following are the Global setting values to one may
-want to look at before proceeding with the migration task:
-
-
-   +----------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | Configuration Parameters         | Description                                                                                                                                                            |
-   +==================================+========================================================================================================================================================================+
-   | image.store.imbalance.threshold  | The storage imbalance threshold that is compared with the standard deviation percentage for a storage utilization metric. The value is a percentage in decimal format. |
-   +----------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | secstorage.max.migrate.sessions  | The max number of concurrent copy command execution sessions that an SSVM can handle                                                                                   |
-   +----------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | max.ssvm.count                   | Number of additional SSVMs to handle migration of data objects concurrently                                                                                            |
-   +----------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   | max.data.migration.wait.time     | Maximum wait time for a data migration task before spawning a new SSVM                                                                                                 |
-   +----------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-
-Secondary storages can also be set to read-only in order to cordon it off
-from being used for storing any further templates, volumes and snapshots.
-
 Working With Volumes
 --------------------
 
-A volume provides storage to a guest VM. The volume can provide for a
-root disk or an additional data disk. CloudStack supports additional
-volumes for guest VMs.
-
-Volumes are created for a specific hypervisor type. A volume that has
-been attached to guest using one hypervisor type (e.g, XenServer) may
-not be attached to a guest that is using another hypervisor type, for
-example:vSphere, KVM. This is because the different hypervisors use
-different disk image formats.
-
-CloudStack defines a volume as a unit of storage available to a guest
+OOTC defines a volume as a unit of storage available to a guest
 VM. Volumes are either root disks or data disks. The root disk has "/"
 in the file system and is usually the boot device. Data disks provide
-for additional storage, for example: "/opt" or "D:". Every guest VM has
-a root disk, and VMs can also optionally have a data disk. End users can
-mount multiple data disks to guest VMs. Users choose data disks from the
-disk offerings created by administrators. The user can create a template
-from a volume as well; this is the standard procedure for private
-template creation. Volumes are hypervisor-specific: a volume from one
-hypervisor type may not be used on a guest of another hypervisor type.
-
-.. note::
-   CloudStack supports attaching up to
-
-   - 13 data disks on XenServer hypervisor versions 6.0 and above,
-     And all versions of VMware.
-
-   - 64 data disks on Hyper-V.
-
-   - 6 data disks on other hypervisor types.
-
+for additional storage, for example: "/opt" or "D:". Every VM has
+a root disk. VMs can also optionally have one or more data disks. 
 
 Creating a New Volume
 ~~~~~~~~~~~~~~~~~~~~~
 
-You can add more data disk volumes to a guest VM at any time, up to the
-limits of your storage capacity. Both CloudStack administrators and
-users can add volumes to VM instances. When you create a new volume, it
-is stored as an entity in CloudStack, but the actual storage resources
-are not allocated on the physical storage device until you attach the
-volume. This optimization allows the CloudStack to provision the volume
-nearest to the guest that will use it when the first attachment is made.
-
-When creating a new volume from an existing ROOT volume snapshot,
-it is required to explicitly define a Disk offering (UI will offer only Disk
-offerings whose disk size is equal or bigger than the size of the snapshot).
-
-|volume-from-snap.PNG|
-
-When creating a new volume from an existing DATA volume snapshot, the disk offering
-associated with the snapshots (inherited from the original volume) is assigned
-to the new volume.
-
-Using Local Storage for Data Volumes
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-You can create data volumes on local storage (supported with XenServer,
-KVM, and VMware). The data volume is placed on the same host as the VM
-instance that is attached to the data volume. These local data volumes
-can be attached to virtual machines, detached, re-attached, and deleted
-just as with the other types of data volume.
-
-Local storage is ideal for scenarios where persistence of data volumes
-and HA is not required. Some of the benefits include reduced disk I/O
-latency and cost reduction from using inexpensive local disks.
-
-In order for local volumes to be used, the feature must be enabled for
-the zone.
-
-You can create a data disk offering for local storage. When a user
-creates a new VM, they can select this disk offering in order to cause
-the data disk volume to be placed in local storage.
-
-You can not migrate a VM that has a volume in local storage to a
-different host, nor migrate the volume itself away to a different host.
-If you want to put a host into maintenance mode, you must first stop any
-VMs with local data volumes on that host.
 
 
 To Create a New Volume
 ^^^^^^^^^^^^^^^^^^^^^^
 
-#. Log in to the CloudStack UI as a user or admin.
+#. Log in to the OOTC UI as a user or admin.
 
 #. In the left navigation bar, click Storage.
 
@@ -308,7 +44,7 @@ To Create a New Volume
    -  Disk Offering. Choose the characteristics of the storage.
 
    The new volume appears in the list of volumes with the state
-   “Allocated.” The volume data is stored in CloudStack, but the volume
+   “Allocated.” The volume data is stored in OOTC, but the volume
    is not yet ready for use
 
 #. To start using the volume, continue to Attaching a Volume
@@ -335,10 +71,10 @@ Setting Usage Limits
 To upload a volume:
 
 #. (Optional) Create an MD5 hash (checksum) of the disk image file that
-   you are going to upload. After uploading the data disk, CloudStack
+   you are going to upload. After uploading the data disk, OOTC
    will use this value to verify that no data corruption has occurred.
 
-#. Log in to the CloudStack UI as an administrator or user
+#. Log in to the OOTC UI as an administrator or user
 
 #. In the left navigation bar, click Storage.
 
@@ -365,7 +101,7 @@ To upload a volume:
       KVM         QCOW2
       ==========  =================
 
-   -  URL. The secure HTTP or HTTPS URL that CloudStack can use to
+   -  URL. The secure HTTP or HTTPS URL that OOTC can use to
       access your disk. The type of file at the URL must match the value
       chosen in Format. For example, if Format is VHD, the URL might
       look like the following:
@@ -387,7 +123,7 @@ Attach a volume when you first create a new volume, when you are moving
 an existing volume from one VM to another, or after you have migrated a
 volume from one storage pool to another.
 
-#. Log in to the CloudStack UI as a user or admin.
+#. Log in to the OOTC UI as a user or admin.
 
 #. In the left navigation, click Storage.
 
@@ -414,13 +150,13 @@ Detaching and Moving Volumes
    <#vm-storage-migration>`_.
 
 A volume can be detached from a guest VM and attached to another guest.
-Both CloudStack administrators and users can detach volumes from VMs and
+Both OOTC administrators and users can detach volumes from VMs and
 move them to other VMs.
 
 If the two VMs are in different clusters, and the volume is large, it
 may take several minutes for the volume to be moved to the new VM.
 
-#. Log in to the CloudStack UI as a user or admin.
+#. Log in to the OOTC UI as a user or admin.
 
 #. In the left navigation bar, click Storage, and choose Volumes in
    Select View. Alternatively, if you know which VM the volume is
@@ -453,7 +189,7 @@ pools and increasing the reliability of virtual machines by moving them
 away from any storage pool that is experiencing issues.
 
 On XenServer and VMware, live migration of VM storage is enabled through
-CloudStack support for XenMotion and vMotion. Live storage migration
+OOTC support for XenMotion and vMotion. Live storage migration
 allows VMs to be moved from one host to another, where the VMs are not
 located on storage shared between the two hosts. It provides the option
 to live migrate a VM’s disks along with the VM itself. It is possible to
@@ -486,7 +222,7 @@ Migrating Storage For a Running VM
 
 (Supported on XenServer and VMware)
 
-#. Log in to the CloudStack UI as a user or admin.
+#. Log in to the OOTC UI as a user or admin.
 
 #. In the left navigation bar, click Instances, click the VM name, and
    click View Volumes.
@@ -507,7 +243,7 @@ Migrating Storage For a Running VM
 Migrating Storage and Attaching to a Different VM
 '''''''''''''''''''''''''''''''''''''''''''''''''
 
-#. Log in to the CloudStack UI as a user or admin.
+#. Log in to the OOTC UI as a user or admin.
 
 #. Detach the disk from the VM. See `“Detaching and
    Moving Volumes” <#detaching-and-moving-volumes>`_ but skip the “reattach”
@@ -536,7 +272,7 @@ storage pool to another, without stopping the VM first.
 and users can not access the VM. After migration is complete, the VM can
 be restarted.
 
-#. Log in to the CloudStack UI as a user or admin.
+#. Log in to the OOTC UI as a user or admin.
 
 #. In the left navigation bar, click Instances, and click the VM name.
 
@@ -547,7 +283,7 @@ be restarted.
 
    .. note::
       If the VM's storage has to be migrated along with the VM, this will
-      be noted in the host list. CloudStack will take care of the storage
+      be noted in the host list. OOTC will take care of the storage
       migration for you.
 
 #. Watch for the volume status to change to Migrating, then back to
@@ -559,8 +295,8 @@ be restarted.
 Resizing Volumes
 ~~~~~~~~~~~~~~~~
 
-CloudStack provides the ability to resize data disks; CloudStack
-controls volume size by using disk offerings. This provides CloudStack
+OOTC provides the ability to resize data disks; OOTC
+controls volume size by using disk offerings. This provides OOTC
 administrators with the flexibility to choose how much space they want
 to make available to the end users. Volumes within the disk offerings
 with the same storage tag can be resized. For example, if you only want
@@ -592,7 +328,7 @@ Before you try to resize a volume, consider the following:
 
 To resize a volume:
 
-#. Log in to the CloudStack UI as a user or admin.
+#. Log in to the OOTC UI as a user or admin.
 
 #. In the left navigation bar, click Storage.
 
@@ -698,7 +434,7 @@ Working with Volume Snapshots
 (Supported for the following hypervisors: **XenServer**, **VMware
 vSphere**, and **KVM**)
 
-CloudStack supports snapshots of disk volumes. Snapshots are a
+OOTC supports snapshots of disk volumes. Snapshots are a
 point-in-time capture of virtual machine disks. Memory and CPU states
 are not captured. If you are using the Oracle VM hypervisor, you can not
 take snapshots, since OVM does not support them.
@@ -713,7 +449,7 @@ snapshots to boot from a restored disk.
 Users can create snapshots manually or by setting up automatic recurring
 snapshot policies. Users can also create disk volumes from snapshots,
 which may be attached to a VM like any other disk volume. Snapshots of
-both root disks and data disks are supported. However, CloudStack does
+both root disks and data disks are supported. However, OOTC does
 not currently support booting a VM from a recovered root disk. A disk
 recovered from snapshot of a root disk is treated as a regular data
 disk; the data on recovered disk can be accessed by attaching the disk
@@ -725,7 +461,7 @@ storage, where it is stored until deleted or purged by newer snapshot.
 How to Snapshot a Volume
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-#. Log in to the CloudStack UI as a user or administrator.
+#. Log in to the OOTC UI as a user or administrator.
 
 #. In the left navigation bar, click Storage.
 
@@ -738,7 +474,7 @@ How to Snapshot a Volume
 KVM volume Snapshot specifics
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In recent CloudStack versions, by default, creating a volume snapshot for a running VM is disabled
+In recent OOTC versions, by default, creating a volume snapshot for a running VM is disabled
 due to a possible volume corruption in certain cases. To enable creating a volume snapshots while the VM
 is running, the global setting 'kvm.snapshot.enabled' must be set to 'True'.
 
@@ -766,7 +502,7 @@ daily snapshot at 02:30.
 With each snapshot schedule, users can also specify the number of
 scheduled snapshots to be retained. Older snapshots that exceed the
 retention limit are automatically deleted. This user-defined limit must
-be equal to or lower than the global limit set by the CloudStack
+be equal to or lower than the global limit set by the OOTC
 administrator. See `“Globally Configured
 Limits” <usage.html#globally-configured-limits>`_. The limit applies only
 to those snapshots that are taken as part of an automatic recurring
@@ -782,7 +518,7 @@ snapshot is created, it is immediately backed up to secondary storage
 and removed from primary storage for optimal utilization of space on
 primary storage.
 
-CloudStack does incremental backups for some hypervisors. When
+OOTC does incremental backups for some hypervisors. When
 incremental backups are supported, every N backup is a full backup.
 
 .. cssclass:: table-striped table-bordered table-hover
@@ -800,7 +536,7 @@ Volume Status
 When a snapshot operation is triggered by means of a recurring snapshot
 policy, a snapshot is skipped if a volume has remained inactive since
 its last snapshot was taken. A volume is considered to be inactive if it
-is either detached or attached to a VM that is not running. CloudStack
+is either detached or attached to a VM that is not running. OOTC
 ensures that at least one snapshot is taken since the volume last became
 inactive.
 
@@ -851,20 +587,20 @@ snapshot request fails and returns an error message.
 VMware Volume Snapshot Performance
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-When you take a snapshot of a data or root volume on VMware, CloudStack
+When you take a snapshot of a data or root volume on VMware, OOTC
 uses an efficient storage technique to improve performance.
 
 A snapshot is not immediately exported from vCenter to a mounted NFS
 share and packaged into an OVA file format. This operation would consume
 time and resources. Instead, the original file formats (e.g., VMDK)
 provided by vCenter are retained. An OVA file will only be created as
-needed, on demand. To generate the OVA, CloudStack uses information in a
+needed, on demand. To generate the OVA, OOTC uses information in a
 properties file (\*.ova.meta) which it stored along with the original
 snapshot data.
 
 .. note::
    For upgrading customers: This process applies only to newly created
-   snapshots after upgrade to CloudStack 4.2. Snapshots that have already
+   snapshots after upgrade to OOTC 4.2. Snapshots that have already
    been taken and stored in OVA format will continue to exist in that
    format, and will continue to work as expected.
 

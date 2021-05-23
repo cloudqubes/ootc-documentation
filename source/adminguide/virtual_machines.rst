@@ -271,7 +271,7 @@ To delete an Instance Group:
 #. Log in to the OOTC UI.
 
 #. In the left navigation bar, click on compute icon |compute-icon.png|, 
-and select Instance Groups from the menu.
+   and select Instance Groups from the menu.
 
 #. Select the Instance Group.
 
