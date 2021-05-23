@@ -6,8 +6,8 @@ Storage Overview
 
 OOTC has two type of storage volumes; Root volumes and data volumes.
 Root volumes are created automatically when a virtual machine is
-created. Root volumes are deleted when the VM is destroyed. Data volumes
-can be created and dynamically attached to VMs. Data volumes are not
+created, and root volumes are deleted when the VM is destroyed. Data volumes
+can be created and dynamically attached to VMs. But, data volumes are not
 deleted when VMs are destroyed.
 
 Working With Volumes
@@ -27,13 +27,11 @@ Creating a New Volume
 To Create a New Volume
 ^^^^^^^^^^^^^^^^^^^^^^
 
-#. Log in to the OOTC UI as a user or admin.
+#. Log in to the OOTC UI.
 
-#. In the left navigation bar, click Storage.
+#. In the left navigation bar, click Volumes in Storage menu. |storage-icon.png|
 
-#. In Select View, choose Volumes.
-
-#. To create a new volume, click Add Volume, provide the following
+#. Click Create Volume, provide the following
    details, and click OK.
 
    -  Name. Give the volume a unique name so you can find it later.
@@ -55,18 +53,10 @@ Uploading an Existing Volume to a Virtual Machine
 
 Existing data can be made accessible to a virtual machine. This is
 called uploading a volume to the VM. For example, this is useful to
-upload data from a local file system and attach it to a VM. Root
-administrators, domain administrators, and end users can all upload
-existing volumes to VMs.
+upload data from a local file system and attach it to a VM. 
 
 The upload is performed using HTTP. The uploaded volume is placed in the
 zone's secondary storage
-
-You cannot upload a volume if the preconfigured volume limit has already
-been reached. The default limit for the cloud is set in the global
-configuration parameter max.account.volumes, but administrators can also
-set per-domain limits that are different from the global default. See
-Setting Usage Limits
 
 To upload a volume:
 
@@ -74,11 +64,11 @@ To upload a volume:
    you are going to upload. After uploading the data disk, OOTC
    will use this value to verify that no data corruption has occurred.
 
-#. Log in to the OOTC UI as an administrator or user
+#. Log in to the OOTC UI.
 
-#. In the left navigation bar, click Storage.
+#. In the left navigation bar, click Volumes in Storage menu. |storage-icon.png|
 
-#. Click Upload Volume.
+#. Click Upload Volume. |upload-volume.png|
 
 #. Provide the following:
 
@@ -91,16 +81,6 @@ To upload a volume:
    -  Format. Choose one of the following to indicate the disk image
       format of the volume.
 
-      .. cssclass:: table-striped table-bordered table-hover
-
-      ==========  =================
-      Hypervisor  Disk Image Format
-      ==========  =================
-      XenServer   VHD
-      VMware      OVA
-      KVM         QCOW2
-      ==========  =================
-
    -  URL. The secure HTTP or HTTPS URL that OOTC can use to
       access your disk. The type of file at the URL must match the value
       chosen in Format. For example, if Format is VHD, the URL might
@@ -111,8 +91,7 @@ To upload a volume:
    -  MD5 checksum. (Optional) Use the hash that you created in step 1.
 
 #. Wait until the status of the volume shows that the upload is
-   complete. Click Instances - Volumes, find the name you specified in
-   step 5, and make sure the status is Uploaded.
+   complete.
 
 
 Attaching a Volume
@@ -123,45 +102,29 @@ Attach a volume when you first create a new volume, when you are moving
 an existing volume from one VM to another, or after you have migrated a
 volume from one storage pool to another.
 
-#. Log in to the OOTC UI as a user or admin.
+#. Log in to the OOTC UI.
 
-#. In the left navigation, click Storage.
-
-#. In Select View, choose Volumes.
+#. In the left navigation bar, click Volumes in Storage menu. |storage-icon.png|
 
 #. Click the volume name in the Volumes list, then click the Attach Disk
    button |AttachDiskButton.png|
 
 #. In the Instance popup, choose the VM to which you want to attach the
-   volume. You will only see instances to which you are allowed to
-   attach volumes; for example, a user will see only instances created
-   by that user, but the administrator will have more choices.
+   volume.
 
-#. When the volume has been attached, you should be able to see it by
-   clicking Instances, the instance name, and View Volumes.
+#. When the volume has been attached, you should be able to see it in 
+   volumes tab in the instance view.
 
 
 Detaching and Moving Volumes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. note::
-   This procedure is different from moving volumes from one storage pool
-   to another as described in `“VM Storage Migration”
-   <#vm-storage-migration>`_.
-
 A volume can be detached from a guest VM and attached to another guest.
-Both OOTC administrators and users can detach volumes from VMs and
-move them to other VMs.
 
-If the two VMs are in different clusters, and the volume is large, it
-may take several minutes for the volume to be moved to the new VM.
+#. Log in to the OOTC UI.
 
-#. Log in to the OOTC UI as a user or admin.
-
-#. In the left navigation bar, click Storage, and choose Volumes in
-   Select View. Alternatively, if you know which VM the volume is
-   attached to, you can click Instances, click the VM name, and click
-   View Volumes.
+#. In the left navigation bar, click Volumes in Storage menu. |storage-icon.png|
+   Alternatively, you can go to the VM instance view, and click Volumes tab.
 
 #. Click the name of the volume you want to detach, then click the
    Detach Disk button. |DetachDiskButton.png|
@@ -170,169 +133,24 @@ may take several minutes for the volume to be moved to the new VM.
    `“Attaching a Volume” <#attaching-a-volume>`_.
 
 
-VM Storage Migration
-~~~~~~~~~~~~~~~~~~~~
-
-Supported in XenServer, KVM, and VMware.
-
-.. note::
-   This procedure is different from moving disk volumes from one VM to
-   another as described in `“Detaching and Moving Volumes”
-   <#detaching-and-moving-volumes>`_.
-
-You can migrate a virtual machine’s root disk volume or any additional
-data disk volume from one storage pool to another in the same zone.
-
-You can use the storage migration feature to achieve some commonly
-desired administration goals, such as balancing the load on storage
-pools and increasing the reliability of virtual machines by moving them
-away from any storage pool that is experiencing issues.
-
-On XenServer and VMware, live migration of VM storage is enabled through
-OOTC support for XenMotion and vMotion. Live storage migration
-allows VMs to be moved from one host to another, where the VMs are not
-located on storage shared between the two hosts. It provides the option
-to live migrate a VM’s disks along with the VM itself. It is possible to
-migrate a VM from one XenServer resource pool / VMware cluster to
-another, or to migrate a VM whose disks are on local storage, or even to
-migrate a VM’s disks from one storage repository to another, all while
-the VM is running.
-
-.. note::
-   Because of a limitation in VMware, live migration of storage for a
-   VM is allowed only if the source and target storage pool are
-   accessible to the source host; that is, the host where the VM is
-   running when the live migration operation is requested.
-
-
-Migrating a Data Volume to a New Storage Pool
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-There are two situations when you might want to migrate a disk:
-
--  Move the disk to new storage, but leave it attached to the same
-   running VM.
-
--  Detach the disk from its current VM, move it to new storage, and
-   attach it to a new VM.
-
-
-Migrating Storage For a Running VM
-''''''''''''''''''''''''''''''''''
-
-(Supported on XenServer and VMware)
-
-#. Log in to the OOTC UI as a user or admin.
-
-#. In the left navigation bar, click Instances, click the VM name, and
-   click View Volumes.
-
-#. Click the volume you want to migrate.
-
-#. Detach the disk from the VM. See `“Detaching and
-   Moving Volumes” <#detaching-and-moving-volumes>`_ but skip the “reattach”
-   step at the end. You will do that after migrating to new storage.
-
-#. Click the Migrate Volume button |Migrateinstance.png| and choose the
-   destination from the dropdown list.
-
-#. Watch for the volume status to change to Migrating, then back to
-   Ready.
-
-
-Migrating Storage and Attaching to a Different VM
-'''''''''''''''''''''''''''''''''''''''''''''''''
-
-#. Log in to the OOTC UI as a user or admin.
-
-#. Detach the disk from the VM. See `“Detaching and
-   Moving Volumes” <#detaching-and-moving-volumes>`_ but skip the “reattach”
-   step at the end. You will do that after migrating to new storage.
-
-#. Click the Migrate Volume button |Migrateinstance.png| and choose the
-   destination from the dropdown list.
-
-#. Watch for the volume status to change to Migrating, then back to
-   Ready. You can find the volume by clicking Storage in the left
-   navigation bar. Make sure that Volumes is displayed at the top of the
-   window, in the Select View dropdown.
-
-#. Attach the volume to any desired VM running in the same cluster as
-   the new storage server. See `“Attaching a
-   Volume” <#attaching-a-volume>`_
-
-
-Migrating a VM Root Volume to a New Storage Pool
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-(XenServer, VMware) You can live migrate a VM's root disk from one
-storage pool to another, without stopping the VM first.
-
-(KVM) When migrating the root disk volume, the VM must first be stopped,
-and users can not access the VM. After migration is complete, the VM can
-be restarted.
-
-#. Log in to the OOTC UI as a user or admin.
-
-#. In the left navigation bar, click Instances, and click the VM name.
-
-#. (KVM only) Stop the VM.
-
-#. Click the Migrate button |Migrateinstance.png| and choose the
-   destination from the dropdown list.
-
-   .. note::
-      If the VM's storage has to be migrated along with the VM, this will
-      be noted in the host list. OOTC will take care of the storage
-      migration for you.
-
-#. Watch for the volume status to change to Migrating, then back to
-   Running (or Stopped, in the case of KVM). This can take some time.
-
-#. (KVM only) Restart the VM.
-
-
 Resizing Volumes
 ~~~~~~~~~~~~~~~~
 
-OOTC provides the ability to resize data disks; OOTC
-controls volume size by using disk offerings. This provides OOTC
-administrators with the flexibility to choose how much space they want
-to make available to the end users. Volumes within the disk offerings
-with the same storage tag can be resized. For example, if you only want
-to offer 10, 50, and 100 GB offerings, the allowed resize should stay
-within those limits. That implies if you define a 10 GB, a 50 GB and a
-100 GB disk offerings, a user can upgrade from 10 GB to 50 GB, or 50 GB
-to 100 GB. If you create a custom-sized disk offering, then you have the
-option to resize the volume by specifying a new, larger size.
+OOTC provides the ability to resize voluems.
 
-Additionally, using the resizeVolume API, a data volume can be moved
-from a static disk offering to a custom disk offering with the size
-specified. This functionality allows those who might be billing by
-certain volume sizes or disk offerings to stick to that model, while
-providing the flexibility to migrate to whatever custom size necessary.
+Before you try to resize a volume, it is recommended to make a backup
+of your data to eliminate any risk of data loss.
 
-This feature is supported on KVM, XenServer, and VMware hosts. However,
-shrinking volumes is not supported on VMware hosts.
-
-Before you try to resize a volume, consider the following:
-
--  The VMs associated with the volume are stopped.
-
--  The data disks associated with the volume are removed.
-
--  When a volume is shrunk, the disk associated with it is simply
-   truncated, and doing so would put its content at risk of data loss.
-   Therefore, resize any partitions or file systems before you shrink a
-   data disk so that all the data is moved off from that disk.
+When a volume is shrunk, the disk associated with it is simply
+truncated, and doing so would put its content at risk of data loss.
+Therefore, resize any partitions or file systems before you shrink a
+data disk so that all the data is moved off from that disk.
 
 To resize a volume:
 
-#. Log in to the OOTC UI as a user or admin.
+#. Log in to the OOTC UI.
 
-#. In the left navigation bar, click Storage.
-
-#. In Select View, choose Volumes.
+#. In the left navigation bar, click Volumes in Storage menu. |storage-icon.png|
 
 #. Select the volume name in the Volumes list, then click the Resize
    Volume button |resize-volume-icon.png|
@@ -353,181 +171,108 @@ To resize a volume:
 
 #. Click OK.
 
-Root Volume size defined via Service Offering
-~~~~~~~~~~~~~~~~
-
-If a Service Offering is created with a root disk size, then resizing the Root volume is possible only by resizing the VMs service offering.
-
-Service offering Root resizing constrains:
-
-#. Users cannot deploy VMs with custom root disk size when using such offerings
-
-#. Users cannot resize the VM root disk size when using such offerings
-
-#. The Root Volume of such VMs can only be resized when changing to another Service Offering with a Root disk size equals or larger than the current one.
-
-#. Users can change the VM offering to a service offering with a Root size of 0GB (default) and then customize the volume size.
-
-The following table shows possible combinations of Service offering supported resizing based on the offering Root disk size:
-
-+---+----------------------------+---------------------------+-------------------------------+
-| # | Service Offering Root size | new Service Offering Root | Does support offering resize? |
-+---+----------------------------+---------------------------+-------------------------------+
-| 1 | 0GB (default)              | Any                       | YES                           |
-+---+----------------------------+---------------------------+-------------------------------+
-| 2 | 5GB                        | 5GB                       | YES                           |
-+---+----------------------------+---------------------------+-------------------------------+
-| 3 | 5GB                        | 10GB                      | YES                           |
-+---+----------------------------+---------------------------+-------------------------------+
-| 4 | 10GB                       | 5GB                       | NO                            |
-+---+----------------------------+---------------------------+-------------------------------+
-| 5 | Any                        | 0GB                       | YES                           |
-+---+----------------------------+---------------------------+-------------------------------+
-
-.. note::
-   Shrinking the Root disk is not supported via the service offering resizing workflow. All the combinations above assume a transition to Root disks with size equals or bigger than the original.
-   Service Offerings with Root size of 0GB do not change the disk size to Zero and indicates that the offering do not enforces a Root disk size.
-
-Reset VM to New Root Disk on Reboot
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-You can specify that you want to discard the root disk and create a new
-one whenever a given VM is rebooted. This is useful for secure
-environments that need a fresh start on every boot and for desktops that
-should not retain state. The IP address of the VM will not change due to
-this operation.
-
-**To enable root disk reset on VM reboot:**
-
-When creating a new service offering, set the parameter isVolatile to
-True. VMs created from this service offering will have their disks reset
-upon reboot. See `“Creating a New Compute
-Offering” <service_offerings.html#creating-a-new-compute-offering>`_.
 
 
-Volume Deletion and Garbage Collection
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Volume Deletion
+~~~~~~~~~~~~~~~
 
 The deletion of a volume does not delete the snapshots that have been
 created from the volume
 
-When a VM is destroyed, data disk volumes that are attached to the VM
-are not deleted.
+When a VM is destroyed, data volumes that are attached to the VM
+are not deleted. But, the root volume of the VM is deleted.
 
-Volumes are permanently destroyed using a garbage collection process.
-The global configuration variables expunge.delay and expunge.interval
-determine when the physical deletion of volumes will occur.
+To delete a volume:
 
--  `expunge.delay`: determines how old the volume must be before it is
-   destroyed, in seconds
+#. Log in to the OOTC UI.
 
--  `expunge.interval`: determines how often to run the garbage collection
-   check
+#. In the left navigation bar, click Volumes in Storage menu. |storage-icon.png|
+   Make sure the volume is not attached to a VM.
 
-Administrators should adjust these values depending on site policies
-around data retention.
+#. Select the volume name in the Volumes list, then click the Destroy
+   button |destroy-icon.png|
 
 
 Working with Volume Snapshots
 -----------------------------
 
-(Supported for the following hypervisors: **XenServer**, **VMware
-vSphere**, and **KVM**)
-
 OOTC supports snapshots of disk volumes. Snapshots are a
 point-in-time capture of virtual machine disks. Memory and CPU states
-are not captured. If you are using the Oracle VM hypervisor, you can not
-take snapshots, since OVM does not support them.
+are not captured. Snapshots can be created from either root or data volumes. 
 
-Snapshots may be taken for volumes, including both root and data disks
-(except when the Oracle VM hypervisor is used, which does not support
-snapshots). The administrator places a limit on the number of stored
-snapshots per user. Users can create new volumes from the snapshot for
-recovery of particular files and they can create templates from
-snapshots to boot from a restored disk.
+You can create new volumes from the snapshot for
+recovery of particular files. Such voluems created from snapshots
+may be attached to a VM like any other data volume. But, you cannot boot new 
+VMs from those volumes. 
 
-Users can create snapshots manually or by setting up automatic recurring
-snapshot policies. Users can also create disk volumes from snapshots,
-which may be attached to a VM like any other disk volume. Snapshots of
-both root disks and data disks are supported. However, OOTC does
-not currently support booting a VM from a recovered root disk. A disk
-recovered from snapshot of a root disk is treated as a regular data
-disk; the data on recovered disk can be accessed by attaching the disk
-to a VM.
-
-A completed snapshot is copied from primary storage to secondary
-storage, where it is stored until deleted or purged by newer snapshot.
+You can also create templates from snapshots. These templates can be used to 
+create new VMs.
 
 How to Snapshot a Volume
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-#. Log in to the OOTC UI as a user or administrator.
+#. Log in to the OOTC UI.
 
-#. In the left navigation bar, click Storage.
-
-#. In Select View, be sure Volumes is selected.
+#. In the left navigation bar, click Volumes in Storage menu. |storage-icon.png|
 
 #. Click the name of the volume you want to snapshot.
 
 #. Click the Snapshot button. |SnapshotButton.png|
 
-KVM volume Snapshot specifics
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-In recent OOTC versions, by default, creating a volume snapshot for a running VM is disabled
-due to a possible volume corruption in certain cases. To enable creating a volume snapshots while the VM
-is running, the global setting 'kvm.snapshot.enabled' must be set to 'True'.
-
-The volume snapshot creation has changed in recent versions:
-
-Under the hood, first, a full VM snapshot is taken - this means that during the taking of
-the VM snapshot the VM will be in the "Paused" state (while RAM memory is being written to the
-QCOW2 file), which means that VM will be unavailable from the network point of view.
-When the VM snapshot is created, VM is unpaused/resumed, the single volume snapshot is exported
-to the Secondary Storage, and then the VM snapshots is removed from the VM.
+..
+   @Question: What is the Async Backup check in Take Snapshot dialog box?
 
 
 Automatic Snapshot Creation and Retention
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-(Supported for the following hypervisors: **XenServer**, **VMware
-vSphere**, and **KVM**)
 
-Users can set up a recurring snapshot policy to automatically create
+You can set up a recurring snapshot policy to automatically create
 multiple snapshots of a disk at regular intervals. Snapshots can be
 created on an hourly, daily, weekly, or monthly interval. One snapshot
-policy can be set up per disk volume. For example, a user can set up a
+policy can be set up per disk volume. For example, you can set up a
 daily snapshot at 02:30.
 
-With each snapshot schedule, users can also specify the number of
+With each snapshot schedule, you can also specify the number of
 scheduled snapshots to be retained. Older snapshots that exceed the
-retention limit are automatically deleted. This user-defined limit must
-be equal to or lower than the global limit set by the OOTC
-administrator. See `“Globally Configured
-Limits” <usage.html#globally-configured-limits>`_. The limit applies only
-to those snapshots that are taken as part of an automatic recurring
-snapshot policy. Additional manual snapshots can be created and
-retained.
+retention limit are automatically deleted. 
 
+To enable automatic snapshot creation:
 
-Incremental Snapshots and Backup
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#. Log in to the OOTC UI.
 
-Snapshots are created on primary storage where a disk resides. After a
-snapshot is created, it is immediately backed up to secondary storage
-and removed from primary storage for optimal utilization of space on
-primary storage.
+#. In the left navigation bar, click Volumes in Storage menu. |storage-icon.png|
 
-OOTC does incremental backups for some hypervisors. When
-incremental backups are supported, every N backup is a full backup.
+#. Click the name of the volume you want to snapshot.
 
-.. cssclass:: table-striped table-bordered table-hover
+#. Click the Recurring Snapshots button. |recurring-snapshots-button.png|
 
-+------------------------------+------------------+------------------+-----+
-|                              | VMware vSphere   | Citrix XenServer | KVM |
-+==============================+==================+==================+=====+
-| Support incremental backup   | No               | Yes              | No  |
-+------------------------------+------------------+------------------+-----+
+#. Fill in the fields.
+
+   - Interval Type. Select the frequency of snapshot creation.
+
+   - Time. Give the time you want to create the snapshot.
+
+   - Keep. Give the number of snapshots you want to retain.
+
+   - Timezone. Specify your timezone.
+
+#. Click OK. In the same dialog box, click on Scheduled Snapshots to view the snapshot creation schedule.
+
+To disable automatic snapshot creation:
+
+#. Log in to the OOTC UI.
+
+#. In the left navigation bar, click Volumes in Storage menu. |storage-icon.png|
+
+#. Click the name of the volume you want to snapshot.
+
+#. Click the Recurring Snapshots button. |recurring-snapshots-button.png|
+
+#. Click on Scheduled Snapshots to view the snapshot creation schedule.
+
+#. On the schedule you want to delete, click on the Delete button. |delete-button.png|
+
 
 
 Volume Status
@@ -547,62 +292,12 @@ regardless of whether a volume has been active or not.
 Snapshot Restore
 ~~~~~~~~~~~~~~~~
 
-There are two paths to restoring snapshots. Users can create a volume
+There are two paths to restoring snapshots. You can create a volume
 from the snapshot. The volume can then be mounted to a VM and files
 recovered as needed. Alternatively, a template may be created from the
-snapshot of a root disk. The user can then boot a VM from this template
+snapshot of a root disk. You must then boot a VM from this template
 to effect recovery of the root disk.
 
-
-Snapshot Job Throttling
-~~~~~~~~~~~~~~~~~~~~~~~
-
-When a snapshot of a virtual machine is requested, the snapshot job runs
-on the same host where the VM is running or, in the case of a stopped
-VM, the host where it ran last. If many snapshots are requested for VMs
-on a single host, this can lead to problems with too many snapshot jobs
-overwhelming the resources of the host.
-
-To address this situation, the cloud's root administrator can throttle
-how many snapshot jobs are executed simultaneously on the hosts in the
-cloud by using the global configuration setting
-concurrent.snapshots.threshold.perhost. By using this setting, the
-administrator can better ensure that snapshot jobs do not time out and
-hypervisor hosts do not experience performance issues due to hosts being
-overloaded with too many snapshot requests.
-
-Set concurrent.snapshots.threshold.perhost to a value that represents a
-best guess about how many snapshot jobs the hypervisor hosts can execute
-at one time, given the current resources of the hosts and the number of
-VMs running on the hosts. If a given host has more snapshot requests,
-the additional requests are placed in a waiting queue. No new snapshot
-jobs will start until the number of currently executing snapshot jobs
-falls below the configured limit.
-
-The admin can also set job.expire.minutes to place a maximum on how long
-a snapshot request will wait in the queue. If this limit is reached, the
-snapshot request fails and returns an error message.
-
-
-VMware Volume Snapshot Performance
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-When you take a snapshot of a data or root volume on VMware, OOTC
-uses an efficient storage technique to improve performance.
-
-A snapshot is not immediately exported from vCenter to a mounted NFS
-share and packaged into an OVA file format. This operation would consume
-time and resources. Instead, the original file formats (e.g., VMDK)
-provided by vCenter are retained. An OVA file will only be created as
-needed, on demand. To generate the OVA, OOTC uses information in a
-properties file (\*.ova.meta) which it stored along with the original
-snapshot data.
-
-.. note::
-   For upgrading customers: This process applies only to newly created
-   snapshots after upgrade to OOTC 4.2. Snapshots that have already
-   been taken and stored in OVA format will continue to exist in that
-   format, and will continue to work as expected.
 
 
 .. |AttachDiskButton.png| image:: /_static/images/attach-disk-icon.png
