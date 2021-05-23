@@ -252,15 +252,15 @@ and select Instances from the menu.
 Instance Groups
 -------------------------------------
 
-Instance Groups can help you in organizing VMs, for management purpose.
-As an example, you can assign a Instance Group to all VMs that are part of one application.
+Instance Groups can help you organize VMs, for adminstrative purposes.
+As an example, you can assign an Instance Group to all VMs that are part of one application.
 
 To create an Instance Group:
 
 #. Log in to the OOTC UI.
 
 #. In the left navigation bar, click on compute icon |compute-icon.png|, 
-and select Instance Groups from the menu.
+   and select Instance Groups from the menu.
 
 #. Click New Instance Group.
 
