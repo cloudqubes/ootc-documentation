@@ -218,6 +218,7 @@ This includes the virtual machine’s IP address.
 Managing Virtual Machines
 =========================
 
+
 Changing the VM Name, OS, or Group
 -------------------------------------
 
@@ -228,7 +229,8 @@ To access a VM through the OOTC UI:
 
 #. Log in to the OOTC UI.
 
-#. In the left navigation, click Instances.
+#. In the left navigation bar, click on compute icon |compute-icon.png|, 
+and select Instances from the menu.
 
 #. Select the VM that you want to modify.
 
@@ -247,6 +249,33 @@ To access a VM through the OOTC UI:
 
 #. Click Apply.
 
+Instance Groups
+-------------------------------------
+
+Instance Groups can help you in organizing VMs, for management purpose.
+As an example, you can assign a Instance Group to all VMs that are part of one application.
+
+To create an Instance Group:
+
+#. Log in to the OOTC UI.
+
+#. In the left navigation bar, click on compute icon |compute-icon.png|, 
+and select Instance Groups from the menu.
+
+#. Click New Instance Group.
+
+#. Give a name for the Instance group and click OK.
+
+To delete an Instance Group:
+
+#. Log in to the OOTC UI.
+
+#. In the left navigation bar, click on compute icon |compute-icon.png|, 
+and select Instance Groups from the menu.
+
+#. Select the Instance Group.
+
+#. Click Delete button. |delete-button.png|
 
 .. _cpu-and-memory-scaling:
 
@@ -489,12 +518,12 @@ snapshot:
 Using SSH Keys for Authentication
 =================================
 
-In addition to the username and password, OOTC
+In addition to the username and password, VMs created in OOTC 
 supports SSH keys for authentication.
 
-Because each cloud user has their own SSH key, one cloud user cannot log
-in to another cloud user's instances unless they share their SSH key
-files. You can assigna one SSH Key to multiple instances.
+When you create an assign an SSH key to a VM, another user cannot log 
+in to that VM unless you share the private key to that user. 
+You can assign one SSH key pair to multiple VMs.
 
 
 Creating an SSH Key Pair
@@ -502,7 +531,8 @@ Creating an SSH Key Pair
 
 #. Log in to the OOTC UI.
 
-#. Click Instances. In Select View click SSH Key Pairs.
+#. In the left navigation bar, click on compute icon |compute-icon.png|, 
+and select SSH Key Pairs from the menu.
 
 #. Click Creat SSH Key Pair.
 
