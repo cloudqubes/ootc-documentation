@@ -4,6 +4,13 @@
 OOTC Kubernetes Service
 ==============================
 
+Kubernetes Supported Versions
+------------------------------
+
+..
+   @Question: The CloudStack docs request the users to download a Kubernetes ISO from 
+   CloudStack. How are we going to handle this?
+
 Kubernetes clusters
 --------------------
 

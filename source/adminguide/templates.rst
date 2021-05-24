@@ -1,43 +1,24 @@
-.. Licensed to the Apache Software Foundation (ASF) under one
-   or more contributor license agreements.  See the NOTICE file
-   distributed with this work for additional information#
-   regarding copyright ownership.  The ASF licenses this file
-   to you under the Apache License, Version 2.0 (the
-   "License"); you may not use this file except in compliance
-   with the License.  You may obtain a copy of the License at
-   http://www.apache.org/licenses/LICENSE-2.0
-   Unless required by applicable law or agreed to in writing,
-   software distributed under the License is distributed on an
-   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-   KIND, either express or implied.  See the License for the
-   specific language governing permissions and limitations
-   under the License.
+.. 
+   "Option One Technologies Cloud" (OOTC) documentation.
 
 Working With Templates
 =======================
 
-A template is a reusable configuration for virtual machines. When users
-launch VMs, they can choose from a list of templates in CloudStack.
+A template is a reusable configuration for virtual machines. When launching 
+VMs, you can choose from a list of templates in OOTC.
 
 Specifically, a template is a virtual disk image that includes one of a
 variety of operating systems, optional additional software such as
 office applications, and settings such as access control to determine
-who can use the template. Each template is associated with a particular
-type of hypervisor, which is specified when the template is added to
-CloudStack.
+who can use the template. 
 
-CloudStack ships with a default template. In order to present more
-choices to users, CloudStack administrators and users can create
-templates and add them to CloudStack.
-
+OOTC has some default templates, and you can create addtitional templates
+according to your requirements.
 
 Creating Templates: Overview
 ----------------------------
 
-CloudStack ships with a default template for the CentOS operating
-system. There are a variety of ways to add more templates.
-Administrators and end users can add templates. The typical sequence of
-events is:
+The typical sequence of creating a template:
 
 #. Launch a VM instance that has the operating system you want. Make any
    other desired configuration changes to the VM.
@@ -46,46 +27,27 @@ events is:
 
 #. Convert the volume into a template.
 
-There are other ways to add templates to CloudStack. For example, you
+There are other ways to add templates to OOTC. For example, you
 can take a snapshot of the VM's volume and create a template from the
-snapshot, or import a VHD from another system into CloudStack.
+snapshot, or import a VHD from another system into OOTC.
 
 The various techniques for creating templates are described in the next
 few sections.
 
 
-Requirements for Templates
---------------------------
-
--  For XenServer, install PV drivers / Xen tools on each template that
-   you create. This will enable live migration and clean guest shutdown.
-
--  For vSphere, install VMware Tools on each template that you create.
-   This will enable console view to work properly.
-
-
-Best Practices for Templates
-----------------------------
-
-If you plan to use large templates (100 GB or larger), be sure you have
-a 10-gigabit network to support the large templates. A slower network
-can lead to timeouts and other errors when large templates are used.
-
 
 The Default Template
 --------------------
 
-CloudStack includes a CentOS template. This template is downloaded by
+OOTC includes a CentOS template. This template is downloaded by
 the Secondary Storage VM after the primary and secondary storage are
 configured. You can use this template in your production deployment or
 you can delete it and use custom templates.
 
-The root password for the default template is "password".
+The password of the root user in default template is "password".
+..
+   @Question: There are several templates. Need to confirm whether this is correct for all of them.
 
-A default template is provided for each of XenServer, KVM, and vSphere.
-The templates that are downloaded depend on the hypervisor type that is
-available in your cloud. Each template is approximately 2.5 GB physical
-size.
 
 The default template includes the standard iptables rules, which will
 block most access to the template excluding ssh.
@@ -117,25 +79,8 @@ block most access to the template excluding ssh.
    ACCEPT     tcp  --  anywhere        anywhere       state NEW tcp dpt:ssh
    REJECT     all  --  anywhere        anywhere       reject-with icmp-host-
 
-
-Private and Public Templates
-----------------------------
-
-When a user creates a template, it can be designated private or public.
-
-Private templates are only available to the user who created them. By
-default, an uploaded template is private.
-
-When a user marks a template as “public,” the template becomes available
-to all users in all accounts in the user's domain, as well as users in
-any other domains that have access to the Zone where the template is
-stored. This depends on whether the Zone, in turn, was defined as
-private or public. A private Zone is assigned to a single domain, and a
-public Zone is accessible to any domain. If a public template is created
-in a private Zone, it is available only to users in the domain assigned
-to that Zone. If a public template is created in a public Zone, it is
-available to all users in all domains.
-
+..
+   @Question: Need to confirm whether this is applicable for all the templates.
 
 Creating a Template from an Existing Virtual Machine
 ----------------------------------------------------
@@ -146,20 +91,23 @@ as the prototype for other VMs.
 #. Create and start a virtual machine using any of the techniques given
    in `“Creating VMs” <virtual_machines.html#creating-vms>`_.
 
-#. Make any desired configuration changes on the running VM, then click
-   Stop.
+#. Make any desired configuration changes on the running VM, then stop the VM.
 
 #. Wait for the VM to stop. When the status shows Stopped, go to the
    next step.
 
-#. Go into "View Volumes" and select the Volume having the type "ROOT".
+#. In the left navigation bar, click Volumes in Storage menu. |storage-icon.png|
 
-#. Click Create Template and provide the following:
+#. From the list of volumes, click on the volume belonging to the VM.
 
-   -  **Name and Display Text**. These will be shown in the UI, so
+#. Click Create Template |create-template-icon.png| and provide the following:
+
+   -  **Name**. These will be shown in the UI, so
       choose something descriptive.
 
-   -  **OS Type**. (Except for VMware). This helps CloudStack and the hypervisor perform
+   - **Description**. Give a meaningful description here.
+
+   -  **OS Type**. This helps OOTC and the hypervisor perform
       certain operations and make assumptions that improve the
       performance of the guest. Select one of the following.
 
@@ -179,12 +127,11 @@ as the prototype for other VMs.
 
 
    -  **Public**. Choose Yes to make this template accessible to all
-      users of this CloudStack installation. The template will appear in
-      the Community Templates list. See `“Private and
-      Public Templates” <#private-and-public-templates>`_.
+      users of this OOTC installation. The template will appear in
+      the Community Templates list.
 
    -  **Password Enabled**. Choose Yes if your template has the
-      CloudStack password change script installed. See 
+      OOTC password change script installed. See 
       :ref:`adding-password-management-to-templates`.
 
 #. Click Add.
@@ -200,20 +147,11 @@ If you do not want to stop the VM in order to use the Create Template
 menu item (as described in `“Creating a Template from an Existing 
 Virtual Machine” <#creating-a-template-from-an-existing-virtual-machine>`_), 
 you can create a template directly from any snapshot through the 
-CloudStack UI.
+OOTC UI.
 
 
 Uploading Templates from a remote HTTP server
 ---------------------------------------------
-
-
-
-vSphere Templates and ISOs
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. warning:: 
-      If you are uploading a template that was created using vSphere Client,
-      be sure the OVA file does not contain an ISO. If it does, the deployment
-      of VMs from the template will fail
 
 Templates are uploaded based on a URL. HTTP is the supported access
 protocol. Templates are frequently large files. You can optionally gzip
@@ -221,28 +159,27 @@ them to decrease upload times.
 
 To upload a template:
 
-#. In the left navigation bar, click Templates.
+#. In the left navigation bar, click Templates in Packages menu. |package-icon.png|
 
-#. Click Register Template.
+..
+   @Question: What would be the appropriate name for this menu icon in the navigation bar. I used "Packages". 
+
+#. Click Register Template from URL.
 
 #. Provide the following:
 
-   -  **Name and Description**. These will be shown in the UI, so choose
-      something descriptive.
-
-   -  **URL**. The Management Server will download the file from the
+   -  **URL**. OOTC will download the template from the
       specified URL, such as ``http://my.web.server/filename.vhd.gz``.
+
+   -  **Name**. Give a name for the new template.
+
+   -  **Description**. Give a meaningful description for the new template.
 
    -  **Zone**. Choose the zone where you want the template to be
       available, or All Zones to make it available throughout
-      CloudStack.
+      OOTC.
 
-   - **Read VM settings from OVA**. (VMware only) If selected, the registered template will allow users to deploy VMs as clones of the template, including all their properties, configurations, end-user license agreements, disks, os type, etc. This option allows users to register virtual appliances. See `Support for Virtual Appliances <virtual_machines.html#about-virtual-appliances>`_.
-
-      .. note:: 
-         When this option is selected the following fields are hidden: Root disk controller, Keyboard type and OS Type. 
-
-   -  **OS Type**: This helps CloudStack and the hypervisor perform
+   -  **OS Type**: This helps OOTC and the hypervisor perform
       certain operations and make assumptions that improve the
       performance of the guest. Select one of the following:
 
@@ -264,11 +201,14 @@ To upload a template:
    -  **Hypervisor**: The supported hypervisors are listed. Select the
       desired one.
 
+..
+   @Question: Shoudn't we remove the hypervisor from the UI and docs.
+
    -  **Format**. The format of the template upload file, such as VHD or
       OVA.
 
    -  **Password Enabled**. Choose Yes if your template has the
-      CloudStack password change script installed. 
+      OOTC password change script installed. 
       See :ref:`adding-password-management-to-templates`.
 
    -  **Extractable**. Choose Yes if the template is available for
@@ -276,7 +216,7 @@ To upload a template:
       full image of a template.
 
    -  **Public**. Choose Yes to make this template accessible to all
-      users of this CloudStack installation. The template will appear in
+      users of this OOTC installation. The template will appear in
       the Community Templates list. See `“Private and
       Public Templates” <#private-and-public-templates>`_.
 
@@ -287,24 +227,12 @@ To upload a template:
       
 Note that uploading multi-disk templates is also supported.
 
-.. note:: 
-   VMware only: If the template is registered with the option 'Read VM settings from OVA' then the VM deployment wizard will display all the available OVF properties, different deployment options or configurations, multiple NICs or end-user license agreements.
-
-   See `Support for Virtual Appliances <virtual_machines.html#about-virtual-appliances>`_.
-
-
-
-.. include:: templates/_bypass-secondary-storage-kvm.rst
-
-
 
 Uploading Templates and ISOs from a local computer
 -------------------------------------------
 
 It's also possible to upload an already prepared template or an ISO from your local computer.
 The steps are similar as when Uploading a template/ISO from a remote HTTP server, except that you need to choose a local template/ISO file from your PC.
-For this feature to work, your SSVMs must be supporting HTTPS (for more info please visit `“Using a SSL Certificate for the Console Proxy” 
-<systemvm.html#using-a-ssl-certificate-for-the-console-proxy>`_).
 
 Example GUI dialog of uploading Template/ISO from local (browser) is given below:
 
@@ -313,78 +241,6 @@ Example GUI dialog of uploading Template/ISO from local (browser) is given below
 |upload-iso-from-local.png|
 
 Note that uploading multi-disk templates is also supported.
-
-Sharing templates and ISOs with other accounts/projects
-----------------------------------------------
-
-When adding a template/ISO, the owner can choose to make template/ISO public or to keep it private. Once the template/ISO is created, the owner can choose to share this template/ISO so that other accounts/projects can also use the template/ISO. 
-
-Currently, the owner can share his template/ISO with:
-  - other accounts inside his own domain (i.e. can't share the template/ISO with other accounts in the subdomain of his domain or any other domains)
-  - projects where he belongs to (i.e. projects where he is the owner/creator or other projects where he has been joined)
-
-Template/ISO permissions can be changed via updateTemplatePermissions/updateIsoPermissions API call or via GUI. It is supported to add, remove or reset (remove all) template/ISO permissions.
-
-When adding or removing permissions to/from a template/ISO, it is required to specify account/project name which is being added/removed from the template/ISO permissions. 
-
-Global setting "allow.user.view.all.domain.accounts" has a default value of "false". This makes sure that when a regular user (of a "User" role) wants to share a template/ISO via GUI, he will not be shown the list of all accounts in his domain and he will need to know the name of the destination account with which he is sharing the template/ISO. This makes sense in public clouds where each account of a single domain is a different tenant/customer and privacy is imperative. In this case, the user will be presented with an input field to enter the account name, as on the images below:
-
-.. warning:: 
-      The images displayed below refer to template permissions, but the same applies for ISO permissions.
-
-|template-permissions-update-manually-1.PNG|
-
-Sharing the template with account "user2"
-
-|template-permissions-update-manually-2.PNG|
-
-Revoking permissions from account "user2"
-
-But in environments where privacy within a domain is not an issue, setting "allow.user.view.all.domain.accounts" setting to "true" will make sure that the user, who is sharing the template, will be presented a more user-friendly multi-select list, listing all the accounts in his domain. This is shown in the images below;
-
-|template-permissions-update-1.PNG|
-
-Sharing the template with just account "user8"
-
-|template-permissions-update-2.PNG|
-
-Sharing template with 2 specific projects
-
-|template-permissions-update-3.PNG|
-
-Revoking permissions from account "user8"
-
-|template-permissions-update-4.PNG|
-
-Revoking permissions from both projects previously added
-
-
-Finally, template permissions can be reset:
-
-|template-permissions-update-5.PNG|
-
-Resetting (removing all) permissions
-
-.. warning:: 
-      Project-owned templates are not supported to be shared outside of 
-      the Project, and if attempted to do so, a proper error message is shown.
-
-Exporting Templates
--------------------
-
-End users and Administrators may export templates from the CloudStack.
-Navigate to the template in the UI and choose the Download function from
-the Actions menu.
-
-.. include:: templates/_create_linux.rst
-
-.. include:: templates/_create_windows.rst
-
-.. include:: templates/_import_ami.rst
-
-.. include:: templates/_convert_hyperv.rst
-
-.. include:: templates/_password.rst
 
 
 Deleting Templates
@@ -403,7 +259,7 @@ template.
 Working with ISOs
 ===================
 
-CloudStack supports ISOs and their attachment to guest VMs. An ISO is a
+OOTC supports ISOs and their attachment to guest VMs. An ISO is a
 read-only file that has an ISO/CD-ROM style file system. Users can
 upload their own ISOs and mount them on their guest VMs.
 
@@ -411,37 +267,28 @@ ISOs are uploaded based on a URL. HTTP is the supported protocol. Once
 the ISO is available via HTTP specify an upload URL such as
 http://my.web.server/filename.iso.
 
-ISOs may be public or private, like templates.ISOs are not
-hypervisor-specific. That is, a guest on vSphere can mount the exact
-same image that a guest on KVM can mount.
 
 ISO images may be stored in the system and made available with a privacy
 level similar to templates. ISO images are classified as either bootable
 or not bootable. A bootable ISO image is one that contains an OS image.
-CloudStack allows a user to boot a guest VM off of an ISO image. Users
+OOTC allows a user to boot a guest VM off of an ISO image. Users
 can also attach ISO images to guest VMs. For example, this enables
-installing PV drivers into Windows. ISO images are not
-hypervisor-specific.
-
+installing PV drivers into Windows.
 
 Adding an ISO
 ---------------
 
-To make additional operating system or other software available for use
-with guest VMs, you can add an ISO. The ISO is typically thought of as
-an operating system image, but you can also add ISOs for other types of
-software, such as desktop applications that you want to be installed as
-part of a template.
+To add an ISO:
 
-#. Log in to the CloudStack UI as an administrator or end user.
+#. Log in to the OOTC UI.
 
-#. In the left navigation bar, click Templates.
-
-#. In Select View, choose ISOs.
+#. In the left navigation bar, click ISOs in Packages menu. |package-icon.png|
 
 #. Click Add ISO.
 
 #. In the Add ISO screen, provide the following:
+
+   -  **URL**: The URL that hosts the ISO image.
 
    -  **Name**: Short name for the ISO image. For example, CentOS 6.2
       64-bit.
@@ -449,18 +296,14 @@ part of a template.
    -  **Description**: Display test for the ISO image. For example,
       CentOS 6.2 64-bit.
 
-   -  **URL**: The URL that hosts the ISO image. The Management Server
-      must be able to access this location via HTTP. If needed you can
-      place the ISO image directly on the Management Server
-
    -  **Zone**: Choose the zone where you want the ISO to be available,
-      or All Zones to make it available throughout CloudStack.
+      or All Zones to make it available throughout OOTC.
 
    -  **Bootable**: Whether or not a guest could boot off this ISO
       image. For example, a CentOS ISO is bootable, a Microsoft Office
       ISO is not bootable.
 
-   -  **OS Type**: This helps CloudStack and the hypervisor perform
+   -  **OS Type**: This helps OOTC and the hypervisor perform
       certain operations and make assumptions that improve the
       performance of the guest. Select one of the following.
 
@@ -469,43 +312,6 @@ part of a template.
 
       -  If the OS Type of the ISO is not listed or if the ISO is not
          bootable, choose Other.
-
-      -  (XenServer only) If you want to boot from this ISO in PV mode,
-         choose Other PV (32-bit) or Other PV (64-bit)
-
-      -  (KVM only) If you choose an OS that is PV-enabled, the VMs
-         created from this ISO will have a SCSI (virtio) root disk. If
-         the OS is not PV-enabled, the VMs will have an IDE root disk.
-         The PV-enabled types are:
-
-         -  Fedora 13
-
-         -  Fedora 12
-
-         -  Fedora 11
-
-         -  Fedora 10
-
-         -  Fedora 9
-
-         -  Other PV
-
-         -  Debian GNU/Linux
-
-         -  CentOS 5.3
-
-         -  CentOS 5.4
-
-         -  CentOS 5.5
-
-         -  Red Hat Enterprise Linux 5.3
-
-         -  Red Hat Enterprise Linux 5.4
-
-         -  Red Hat Enterprise Linux 5.5
-
-         -  Red Hat Enterprise Linux 6
-
 
       .. note:: 
          It is not recommended to choose an older version of the OS than 
@@ -532,14 +338,14 @@ part of a template.
 
 #. **Important**: Wait for the ISO to finish downloading. If you move on
    to the next task and try to use the ISO right away, it will appear to
-   fail. The entire ISO must be available before CloudStack can work
+   fail. The entire ISO must be available before you can work
    with it.
 
 
 Attaching an ISO to a VM
 -------------------------
 
-#. In the left navigation, click Instances.
+#. In the left navigation bar, click Instances in Compute menu. |compute-icon.png|
 
 #. Choose the virtual machine you want to work with.
 
@@ -576,3 +382,6 @@ Attaching an ISO to a VM
    :alt: Revoking permsissons from both projects previously added
 .. |template-permissions-update-5.PNG| image:: /_static/images/template-permissions-update-5.PNG
    :alt: Reseting (removing all) permissions
+.. |compute-icon.png| image:: /_static/images/compute-icon.png
+   :alt: Compute
+

@@ -260,7 +260,7 @@ Deploying VMs to the Networks in a VPC
    The Add Instance page is displayed.
 
    Follow the on-screen instruction to add an instance. For information
-   on adding an instance, see the Creating VMs section.
+   on adding a VM instance, see the `“Creating VMs” <virtual_machines.html#creating-vms>`_.
 
 
 Acquiring a New IP Address for a VPC
