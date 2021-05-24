@@ -576,9 +576,6 @@ The -i parameter tells the ssh client to use a ssh key found at
 .. include:: virtual_machines/user-data.rst
 
 
-..
-   @Question: Assume GPU is not supported.
 
-
-   .. |console-icon.png| image:: /_static/images/console-icon.png
+.. |console-icon.png| image:: /_static/images/console-icon.png
    :alt: VM Console.
