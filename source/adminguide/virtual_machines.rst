@@ -4,11 +4,9 @@
 About Working with Virtual Machines
 ===================================
 
-OOTC gives you complete control over the lifecycle of the guest VMs in the cloud. 
-Using the OOTC UI, you can start, reboot, stop, and destroy VMs.
-
-A VM can have a name, a display name, and a group. You can use these to 
-keep your VMs organized.
+You can create VMs and manage their entire lifecycle using 
+the OOTC UI. A VM in OOTC has a name, a display name, and a group that you can
+use to keep your VMs organized.
 
 ..
    @Question: The group is visible only at the VM creation. Should we mention that in the docs?
@@ -27,7 +25,7 @@ A VM is allocated one public IP address. When the VM is started,
 OOTC automatically creates a static NAT between this public IP
 address and the private IP address of the VM.
 
-If elastic IP is in use (with the NetScaler load balancer), the IP
+If elastic IP is in use, the IP
 address initially allocated to the new VM is not marked as elastic. The
 user must replace the automatically configured IP with a specifically
 acquired elastic IP, and set up the static NAT mapping between this new
@@ -38,7 +36,8 @@ EIP-enabled Basic zone. For more information on Elastic IP, see
 `“About Elastic IP” <networking/elastic_ips.html>`_.
 
 ..
-   @Question: Assume above behavior is same in OOTC. Please confirm?
+   @Suggestion: Assume above behavior is same in OOTC. Also the link "About Elastic IP" 
+   is not working in the CloudStack docs. We may have to write in anew.
 
 OOTC cannot distinguish a guest VM that was shut down by the user
 (such as with the “shutdown” command in Linux) from a VM that shut down
@@ -84,7 +83,11 @@ To create a VM from a template:
 
 #. Log in to the OOTC UI.
 
-#. In the left navigation bar, click Instances.
+#. In the left navigation bar, click Instances in the Compute menu. |compute-icon.png|
+
+..
+   @Suggestion: We need to adopt a naming convention for the menu items in the
+   navigation bar. I have used to Compute here. 
 
 #. Click Add Instance.
 
@@ -94,16 +97,13 @@ To create a VM from a template:
    information about how the templates came to be in this list, see
    `*Working with Templates* <templates.html>`_.
 
-#. Be sure that the hardware you have allows starting the selected
-   service offering.
-
 #. Click Submit and your VM will be created and started.
 
 To create a VM from an ISO:
 
 #. Log in to the OOTC UI .
 
-#. In the left navigation bar, click Instances.
+#. In the left navigation bar, click Instances in the Compute menu. |compute-icon.png|
 
 #. Click Add Instance.
 
@@ -114,41 +114,16 @@ To create a VM from an ISO:
 #. Click Submit and your VM will be created and started.
 
 
-
-Install Required Tools and Drivers
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Be sure the following are installed on each VM:
-
--  For XenServer, install PV drivers and Xen tools on each VM. This will
-   enable live migration and clean guest shutdown. Xen tools are
-   required in order for dynamic CPU and RAM scaling to work.
-
-
-To be sure that Xen tools or VMware Tools is installed, use one of the
-following techniques:
-
--  Create each VM from a template that already has the tools installed;
-   or,
-
--  When registering a new template, the user can
-   indicate whether tools are installed on the template. This can be
-   done through the UI or using the updateTemplate API; or,
-
-..
-   @Question: Is above related to 'Install Required Tools and Drivers' required?
-
-
-
 Accessing VMs
 -------------
-
 
 To access a VM through the OOTC UI:
 
 #. Log in to the OOTC UI.
 
-#. Click Instances, then click the name of a running VM.
+#. In the left navigation bar, click Instances in the Compute menu. |compute-icon.png|
+
+#. Click the name of a running VM.
 
 #. Click the View Console button |console-icon.png|.
 
@@ -171,6 +146,10 @@ To access a VM directly over the network:
    create a firewall rule to allow access. See `“IP
    Forwarding and Firewalling” <advanced_zone_config.html#ip-forwarding-and-firewalling>`_.
 
+..
+   @Suggestion: "IP Forwarding and Firewalling" link is not working in the original docs.
+   I believe we have to rewrite this http://docs.cloudstack.apache.org/en/latest/adminguide/networking_and_traffic.html#ip-forwarding-and-firewalling
+   according to OOTC network architecture and link from here.
 
 Stopping and Starting VMs
 -------------------------
@@ -200,7 +179,7 @@ To delete a virtual machine:
 
 #. Log in to the OOTC UI.
 
-#. In the left navigation, click Instances.
+#. In the left navigation bar, click Instances in the Compute menu. |compute-icon.png|
 
 #. Choose the VM that you want to delete.
 
@@ -213,7 +192,8 @@ have been deleted, the VM is said to have been expunged.
 
 Once a virtual machine delete, all the
 resources used by the virtual machine will be reclaimed by the system,
-This includes the virtual machine’s IP address.  
+This includes the virtual machine’s IP address. 
+
 
 Managing Virtual Machines
 =========================
@@ -229,8 +209,7 @@ To access a VM through the OOTC UI:
 
 #. Log in to the OOTC UI.
 
-#. In the left navigation bar, click on compute icon |compute-icon.png|, 
-and select Instances from the menu.
+#. In the left navigation bar, click Instances in the Compute menu. |compute-icon.png|
 
 #. Select the VM that you want to modify.
 
@@ -259,8 +238,7 @@ To create an Instance Group:
 
 #. Log in to the OOTC UI.
 
-#. In the left navigation bar, click on compute icon |compute-icon.png|, 
-   and select Instance Groups from the menu.
+#. In the left navigation bar, click Instance Groups in the Compute menu. |compute-icon.png|
 
 #. Click New Instance Group.
 
@@ -270,8 +248,7 @@ To delete an Instance Group:
 
 #. Log in to the OOTC UI.
 
-#. In the left navigation bar, click on compute icon |compute-icon.png|, 
-   and select Instance Groups from the menu.
+#. In the left navigation bar, click Instance Groups in the Compute menu. |compute-icon.png|
 
 #. Select the Instance Group.
 
@@ -292,7 +269,7 @@ To scale CPU and memory in a running VM:
 
 #. Log in to the OOTC UI.
 
-#. In the left navigation, click Instances.
+#. In the left navigation bar, click Instances in the Compute menu. |compute-icon.png|
 
 #. Choose the VM that you want to work with.
 
@@ -322,8 +299,8 @@ Limitations
 Affinity Groups
 ~~~~~~~~~~~~~~~
 
-By defining affinity groups and assigning VMs to them, the user 
-can influence (but not dictate) which VMs should run on
+By defining affinity groups and assigning to VMs, the user 
+can influence which VMs should run on
 separate hosts. This feature is to let users specify that VMs with the
 same “host anti-affinity” type won’t be on the same host. This serves to
 increase fault tolerance. If a host fails, another VM offering the same
@@ -338,9 +315,9 @@ Creating a New Affinity Group
 
 To add an affinity group:
 
-#. Log in to the OOTC UI as an administrator or user.
+#. Log in to the OOTC UI.
 
-#. In the left navigation bar, click Affinity Groups.
+#. In the left navigation bar, click Affinity Groups in the Compute menu. |compute-icon.png|
 
 #. Click Add affinity group. In the dialog box, fill in the following
    fields:
@@ -370,9 +347,9 @@ Change Affinity Group for an Existing VM
 
 To assign an existing VM to an affinity group:
 
-#. Log in to the OOTC UI as user.
+#. Log in to the OOTC UI.
 
-#. In the left navigation bar, click Instances.
+#. In the left navigation bar, click Instances in the Compute menu. |compute-icon.png|
 
 #. Click the name of the VM you want to work with.
 
@@ -386,7 +363,9 @@ View Members of an Affinity Group
 
 To see which VMs are currently assigned to a particular affinity group:
 
-#. In the left navigation bar, click Affinity Groups.
+#. Log in to the OOTC UI.
+
+#. In the left navigation bar, click Affinity Groups in the Compute menu. |compute-icon.png|
 
 #. Click the name of the group you are interested in.
 
@@ -401,7 +380,9 @@ Delete an Affinity Group
 
 To delete an affinity group:
 
-#. In the left navigation bar, click Affinity Groups.
+#. Log in to the OOTC UI.
+
+#. In the left navigation bar, click Affinity Groups in the Compute menu. |compute-icon.png|
 
 #. Click the name of the group you are interested in.
 
@@ -427,7 +408,6 @@ changes such as software upgrades. If anything goes wrong, simply
 restore the VM to its previous state using the previously saved VM
 snapshot.
 
-The snapshot is created using the hypervisor's native snapshot facility.
 The VM snapshot includes not only the data volumes, but optionally also
 whether the VM is running or turned off (CPU state) and the memory
 contents. The snapshot is stored in OOTC's primary storage.
@@ -470,7 +450,7 @@ To create a VM snapshot using the OOTC UI:
 
 #. Log in to the OOTC UI.
 
-#. Click Instances.
+#. In the left navigation bar, click Instances in the Compute menu. |compute-icon.png|
 
 #. Click the name of the VM you want to snapshot.
 
@@ -488,9 +468,6 @@ To create a VM snapshot using the OOTC UI:
    state of the virtual machine. If you don't check this box, then only
    the current state of the VM disk is saved. Checking this box makes
    the snapshot take longer.
-
-..
-   @Question: Assume Quise is not supported on Xen.
 
 #. Click OK.
 
@@ -531,8 +508,7 @@ Creating an SSH Key Pair
 
 #. Log in to the OOTC UI.
 
-#. In the left navigation bar, click on compute icon |compute-icon.png|, 
-and select SSH Key Pairs from the menu.
+#. In the left navigation bar, click SSH Key Pairs in the Compute menu. |compute-icon.png|
 
 #. Click Creat SSH Key Pair.
 
@@ -545,7 +521,7 @@ and select SSH Key Pairs from the menu.
 
 #. Click OK.
 
-#. If you did not provide the Public Key, copy download and save the private key. 
+#. If you did not provide the Public Key, copy and save or download the private key. 
    OOTC will not store the private key, so if you loose your private key it 
    cannot be recovered.
 
@@ -579,3 +555,5 @@ The -i parameter tells the ssh client to use a ssh key found at
 
 .. |console-icon.png| image:: /_static/images/console-icon.png
    :alt: VM Console.
+.. |compute-icon.png| image:: /_static/images/compute-icon.png
+   :alt: Compute.
