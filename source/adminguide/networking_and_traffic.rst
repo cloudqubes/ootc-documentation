@@ -5,7 +5,7 @@
 About Networking in OOTC
 ---------------------------
 
-OOTC implements flexible virtual networking solution. 
+OOTC implements a flexible networking solution. 
 A virtual network in OOTC can be L2 or L3. When creating a VM, you 
 can select the networks, the VM has to connect. You can also connect a running VM to a new 
 virtual network.
@@ -25,7 +25,7 @@ To create an L3 Network:
 
 #. Log in to the CloudStack UI.
 
-#. In the left navigation, choose Guest Networks in Network menu. |network-icon.png|
+#. In the left navigation, click on Guest Networks in Network menu. |network-icon.png|
 
 #. Click Add network. Provide the following information:
 
@@ -65,7 +65,7 @@ To create an L2 Network:
 
 #. Log in to the CloudStack UI.
 
-#. In the left navigation, choose Guest Networks in Network menu. |network-icon.png|
+#. In the left navigation, click on Guest Networks in Network menu. |network-icon.png|
 
 #. Click Add network and select L2 tab. Provide the following information:
 
@@ -90,7 +90,7 @@ To view VM instances connected to a network:
 
 #. Log in to the CloudStack UI.
 
-#. In the left navigation, choose Guest Networks in Network menu. |network-icon.png|
+#. In the left navigation, click Guest Networks in Network menu. |network-icon.png|
 
 #. Click on the network name in the list of networks.
 
@@ -100,7 +100,7 @@ To connect a VM to a network:
 
 #. Log in to the CloudStack UI.
 
-#. In the left navigation, choose Guest Instances from Compute menu. |compute-icon.png|
+#. In the left navigation, click Instances from Compute menu. |compute-icon.png|
 
 #. Click on NICs tab. Click on Add network to VM.
 
@@ -114,7 +114,7 @@ To remove a connection to a network from a VM:
 
 #. Log in to the CloudStack UI.
 
-#. In the left navigation, choose Guest Instances from Compute menu. |compute-icon.png|
+#. In the left navigation, click Instances from Compute menu. |compute-icon.png|
 
 #. Click on NICs tab.
 
@@ -144,9 +144,20 @@ To delete a network:
    @Question: Is elastic IP assignment supported?
 
 ..
-   @Question: are security groups supported?
+   @Question: Are security groups supported?
 
 
 
 .. include:: networking/virtual_private_cloud_config.rst
 
+
+.. |network-icon.png| image:: /_static/images/network-icon.png
+   :alt: Networking
+.. |plus-icon.png| image:: /_static/images/plus-icon.png
+   :alt: Networking
+.. |delete-button.png| image:: /_static/images/delete-button.png
+   :alt: Networking
+.. |compute-icon.png| image:: /_static/images/compute-icon.png
+   :alt: Networking
+.. |edit-secondary-ip-icon.png| image:: /_static/images/edit-secondary-ip-icon.png
+   :alt: Networking

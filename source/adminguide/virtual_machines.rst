@@ -557,3 +557,23 @@ The -i parameter tells the ssh client to use a ssh key found at
    :alt: VM Console.
 .. |compute-icon.png| image:: /_static/images/compute-icon.png
    :alt: Compute.
+.. |delete-button.png| image:: /_static/images/delete-button.png
+   :alt: Delete VM.
+.. |revert-vm.png| image:: /_static/images/compute-icon.png
+   :alt: Revert VM.
+.. |Destroyinstance.png| image:: /_static/images/Destroyinstance.png
+   :alt: Destroy VM.
+.. |StopButton.png| image:: /_static/images/StopButton.png
+   :alt: Stop VM.
+.. |EditButton.png| image:: /_static/images/EditButton.png
+   :alt: Edit VM.
+.. |delete-button.png| image:: /_static/images/delete-button.png
+   :alt: Delete.
+.. |ScaleVMButton.png| image:: /_static/images/ScaleVMButton.png
+   :alt: Scale VM.
+.. |change-affinity-button.png| image:: /_static/images/change-affinity-button.png
+   :alt: Change VM Affinity
+.. |VMSnapshotButton.png| image:: /_static/images/VMSnapshotButton.png
+   :alt: VM Snapshot
+.. |delete-button.png| image:: /_static/images/delete-button.png
+   :alt: Delete

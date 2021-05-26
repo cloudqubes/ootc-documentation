@@ -45,6 +45,7 @@ configured. You can use this template in your production deployment or
 you can delete it and use custom templates.
 
 The password of the root user in default template is "password".
+
 ..
    @Question: There are several templates. Need to confirm whether this is correct for all of them.
 
@@ -78,6 +79,7 @@ block most access to the template excluding ssh.
    ACCEPT     all  --  anywhere        anywhere       state RELATED,ESTABLISHED
    ACCEPT     tcp  --  anywhere        anywhere       state NEW tcp dpt:ssh
    REJECT     all  --  anywhere        anywhere       reject-with icmp-host-
+
 
 ..
    @Question: Need to confirm whether this is applicable for all the templates.
@@ -384,4 +386,9 @@ Attaching an ISO to a VM
    :alt: Reseting (removing all) permissions
 .. |compute-icon.png| image:: /_static/images/compute-icon.png
    :alt: Compute
+.. |package-icon.png| image:: /_static/images/package-icon.png
+   :alt: Packages.
+.. |iso.png| image:: /_static/images/iso.png
+   :alt: Attach ISO.
+
 

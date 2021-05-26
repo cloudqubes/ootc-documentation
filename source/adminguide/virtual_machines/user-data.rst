@@ -4,10 +4,11 @@
 User-Data and Meta-Data
 -----------------------
 
-When creating a new VM in the OOTC UI, you can specify a user-data string
-which will be made available to the VM.
+When creating a new VM in the OOTC UI, you can specify a user-data string.
+This string will be made available to the VM, so you can use it to pass configuration
+parameters to the VM.
 
-This user data can be accesed from the VM via cloud-init or HTTP API.
+This user data can be accesed from the VM via cloud-init or an HTTP API.
 
 Using HTTP API
 ~~~~~~~~~~~~~~~~
@@ -69,7 +70,7 @@ Creating VM with this user-data
 
 #. Log in to the OOTC UI.
 
-#. In the left navigation bar, click Instances.
+#. In the left navigation bar, click Instances in the Compute menu. |compute-icon.png|
 
 #. Click Add Instance.
 
@@ -79,3 +80,6 @@ Creating VM with this user-data
 "Userdata" field.
 
 #. Launch the VM.
+
+.. |compute-icon.png| image:: /_static/images/compute-icon.png
+   :alt: Compute.

@@ -7,11 +7,12 @@ Virtual Private Cloud
 --------------------
 
 
-OOTC Virtual Private Cloud is a private, isolated environment.
+OOTC Virtual Private Cloud (VPC) is a private, isolated environment for your
+virtual resources.
 A VPC can have its own virtual network topology that
 resembles a traditional physical network. You can launch VMs in the
 virtual network that can have private addresses in the range of your
-choice, for example: 10.0.0.0/16. You can define network networks within
+choice, for example: 10.0.0.0/16. You can define networks within
 your VPC network range, which in turn enables you to group similar kinds
 of instances based on IP address range.
 
@@ -26,7 +27,7 @@ Adding a Virtual Private Cloud
 
 #. Log in to the OOTC UI.
 
-#. In the left navigation, choose Guest Networks in Network menu. |network-icon.png|
+#. In the left navigation, VPC in Network menu. |network-icon.png|
 
 #. Click Add VPC. The Add VPC page is displayed as follows:
 
@@ -64,7 +65,7 @@ To add a network to a VPC:
 
 #. Log in to the OOTC UI.
 
-#. In the left navigation, choose VPC in Network menu. |network-icon.png|
+#. In the left navigation, click VPC in Network menu. |network-icon.png|
 
 #. In the Select view, select VPC.
 
@@ -131,7 +132,7 @@ Creating ACL Lists
 
 #. Log in to the OOTC UI.
 
-#. In the left navigation, choose VPC in Network menu. |network-icon.png|
+#. In the left navigation, click VPC in Network menu. |network-icon.png|
 
 #. Click on the name of the VPC.
 
@@ -153,7 +154,7 @@ Creating an ACL Rule
 
 #. Log in to the OOTC UI.
 
-#. In the left navigation, choose VPC in Network menu. |network-icon.png|
+#. In the left navigation, click VPC in Network menu. |network-icon.png|
 
 #. Click on the name of the VPC.
 
@@ -164,7 +165,7 @@ Creating an ACL Rule
 #. Select the ACL List Rules tab.
 
    To add an ACL rule, fill in the following fields to specify what kind
-   of network traffic is allowed in the VPC.
+   of network traffic that is allowed in the VPC.
 
    -  **Rule Number**: The order in which the rules are evaluated.
 
@@ -205,7 +206,7 @@ Creating an ACL Rule
 
 
 Creating a network with Custom ACL List
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 #. Create a VPC.
 
@@ -249,7 +250,7 @@ Deploying VMs to the Networks in a VPC
 
 #. Log in to the OOTC UI.
 
-#. In the left navigation, choose VPC in Network menu. |network-icon.png|
+#. In the left navigation, click VPC in Network menu. |network-icon.png|
 
 #. From the list of VPCs, click on the desired VPC.
 
@@ -284,8 +285,7 @@ associated to more than one network at a time.
 
 #. Click Acquire New IP, and click Yes in the confirmation dialog.
 
-   You are prompted for confirmation because, typically, IP addresses
-   are a limited resource. Within a few moments, the new IP address
+   You are prompted for confirmation. Within a few moments, the new IP address
    should appear with the state Allocated. You can now use the IP
    address in port forwarding, load balancing, and static NAT rules.
 
@@ -301,7 +301,7 @@ The released IP address will still belongs to the same VPC.
 
 #. Log in to the OOTC UI.
 
-#. In the left navigation, choose VPC in Network menu. |network-icon.png|
+#. In the left navigation, click VPC in Network menu. |network-icon.png|
 
 #. From the list of VPCs, click on the desired VPC.
 
@@ -326,7 +326,7 @@ belonging to the same VPC.
 
 #. Log in to the OOTC UI.
 
-#. In the left navigation, choose VPC in Network menu. |network-icon.png|
+#. In the left navigation, click VPC in Network menu. |network-icon.png|
 
 #. From the list of VPCs, click on the desired VPC.
 
@@ -335,7 +335,7 @@ belonging to the same VPC.
 #. Select the network you want to remove.
 
 #. Click the Delete Network button.
-   |del-network.png|
+   |delete-network.png|
 
    Click Yes to confirm. Wait for some time for the network to be removed.
 
@@ -347,7 +347,7 @@ Editing, Restarting, and Removing a Virtual Private Cloud
 
 #. Log in to the OOTC UI.
 
-#. In the left navigation, choose VPC in Network menu. |network-icon.png|
+#. In the left navigation, click VPC in Network menu. |network-icon.png|
 
 #. From the list of VPCs, click on the desired VPC.
 
@@ -388,3 +388,16 @@ Editing, Restarting, and Removing a Virtual Private Cloud
    :alt: button to remove a VPC
 .. |restart-vpc.png| image:: /_static/images/restart-vpc.png
    :alt: button to restart a VPC
+.. |network-icon.png| image:: /_static/images/network-icon.png
+   :alt: Networking
+.. |release-ip-icon.png| image:: /_static/images/release-ip-icon.png
+   :alt: Release IP
+.. |delete-network.png| image:: /_static/images/delete-network.png
+   :alt: Delete network
+
+.. |vpc-edit-icon.png| image:: /_static/images/vpc-edit-icon.png
+   :alt: Edit VPC
+.. |restart-vpc.png| image:: /_static/images/restart-vpc.png
+   :alt: Restart VPC
+.. |remove-vpc.png| image:: /_static/images/remove-vpc.png
+   :alt: Remove VPC

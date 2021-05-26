@@ -6,8 +6,8 @@ Storage Overview
 
 OOTC has two type of storage volumes; Root volumes and data volumes.
 Root volumes are created automatically when a virtual machine is
-created, and root volumes are deleted when the VM is destroyed. Data volumes
-can be created and dynamically attached to VMs. But, data volumes are not
+created, and are deleted when the VM is destroyed. Data volumes
+can be created separately and dynamically attached to VMs. Data volumes are not
 deleted when VMs are destroyed.
 
 Working With Volumes
@@ -43,7 +43,7 @@ To Create a New Volume
 
    The new volume appears in the list of volumes with the state
    “Allocated.” The volume data is stored in OOTC, but the volume
-   is not yet ready for use
+   is not yet ready for use.
 
 #. To start using the volume, continue to Attaching a Volume
 
@@ -314,3 +314,11 @@ to effect recovery of the root disk.
    :alt: button to migrate a volume.
 .. |volume-from-snap.PNG| image:: /_static/images/volume-from-snap.PNG
    :alt: Offering is needed when creating a volume from the ROOT volume snapshot.
+.. |storage-icon.png| image:: /_static/images/storage-icon.png
+   :alt: Storage
+.. |upload-volume.png| image:: /_static/images/upload-volume.png
+   :alt: Storage
+.. |recurring-snapshots-button.png| image:: /_static/images/recurring-snapshots-button.png
+   :alt: Storage
+.. |delete-button.png| image:: /_static/images/delete-button.png
+   :alt: Storage

@@ -29,7 +29,7 @@ To create a new Kubernetes cluster:
 
 #. Log in to the OOTC UI.
 
-#. In the left navigation bar, click on compute icon |compute-icon.png|, and select Kubernetes from the menu.
+#. In the left navigation bar, click Kubernetes in the Compute menu. |compute-icon.png|
 
 #. Click on Create Kubernetes Cluster.
 
@@ -67,7 +67,7 @@ To list the Kubernetes clusters:
 
 #. Log in to the OOTC UI.
 
-#. In the left navigation bar, click on compute icon |compute-icon.png|, and select Kubernetes from the menu.
+#. In the left navigation bar, click Kubernetes in the Compute menu. |compute-icon.png|
 
 The Kubernets clusters will be shown in the UI.
 
@@ -78,7 +78,7 @@ To stop a Kubernetes cluster:
 
 #. Log in to the OOTC UI.
 
-#. In the left navigation bar, click on compute icon |compute-icon.png|, and select Kubernetes from the menu.
+#. In the left navigation bar, click Kubernetes in the Compute menu. |compute-icon.png|
 
 #. Select the Kubernetes cluster you want to stop.
 
@@ -92,7 +92,7 @@ To start a Kubernetes cluster in stopped state:
 
 #. Log in to the OOTC UI.
 
-#. In the left navigation bar, click on compute icon |compute-icon.png|, and select Kubernetes from the menu.
+#. In the left navigation bar, click Kubernetes in the Compute menu. |compute-icon.png|
 
 #. Select the Kubernetes cluster you want to start.
 
@@ -120,7 +120,7 @@ To delete a Kubernetes cluster:
 
 #. Log in to the OOTC UI.
 
-#. In the left navigation bar, click on compute icon |compute-icon.png|, and select Kubernetes from the menu.
+#. In the left navigation bar, click Kubernetes in the Compute menu. |compute-icon.png|
 
 #. Select the Kubernetes cluster you want to start.
 
@@ -209,3 +209,13 @@ Token for dashboard login can be retrieved using following command
    :alt: Upgrade Kubernetes Cluster form.
 .. |cks-versions.png| image:: /_static/images/cks-versions.png
    :alt: Supported Kubernetes versions list.
+.. |compute-icon.png| image:: /_static/images/compute-icon.png
+   :alt: Compute.
+
+.. |stop-cluster.png| image:: /_static/images/stop-cluster.png
+   :alt: Stop cluster.
+.. |start-cluster.png| image:: /_static/images/start-cluster.png
+   :alt: Start cluster.
+.. |delete-cluster.png| image:: /_static/images/delete-cluster.png
+   :alt: Delete cluster.
+
