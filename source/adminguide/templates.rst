@@ -204,7 +204,7 @@ To upload a template:
       desired one.
 
 ..
-   @Question: Shoudn't we remove the hypervisor from the UI and docs.
+   @Question: Shoudn't we remove the hypervisor from the UI and the docs.
 
    -  **Format**. The format of the template upload file, such as VHD or
       OVA.
@@ -387,8 +387,11 @@ Attaching an ISO to a VM
 .. |compute-icon.png| image:: /_static/images/compute-icon.png
    :alt: Compute
 .. |package-icon.png| image:: /_static/images/package-icon.png
-   :alt: Packages.
+   :alt: Packages
 .. |iso.png| image:: /_static/images/iso.png
-   :alt: Attach ISO.
-
+   :alt: Attach ISO
+.. |storage-icon.png| image:: /_static/images/storage-icon.png
+   :alt: Storage
+.. |create-template-icon.png| image:: /_static/images/create-template-icon.png
+   :alt: Create template
 
